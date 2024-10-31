@@ -18,7 +18,8 @@
 
 .logo {
     width: 120px;
-    margin-bottom: 20px;
+    margin-top: 20px;
+    -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
 }
 
 .title {

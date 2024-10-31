@@ -20,6 +20,7 @@ function Menu() {
                         <button className={styles.button} onClick={() => handleUserClick('1')}>Non-directed Graph</button>
                         <button className={styles.button} onClick={() => handleUserClick('2')}>Directed Graph</button>
                     </div>
+                    <img className={styles.logo} src="/images/logo.png" alt="logo"/>
                 </div>
             </body>
         </>
