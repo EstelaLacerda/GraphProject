@@ -13,7 +13,7 @@ function Menu() {
     return (
         <>
             <body className={styles['menu-body']}>
-                <div className={styles.contaiiner}>
+                <div className={styles.container}>
                     <h1 data-text='Graph Project' className={styles.title}>Graph Projet</h1>
                     <p className={styles.subtitle}>Select the type of graph you want to generate</p>
                     <div className={styles['button-container']}>
