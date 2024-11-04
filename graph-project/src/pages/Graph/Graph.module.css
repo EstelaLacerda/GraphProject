@@ -1,0 +1,63 @@
+.graph-body {
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.graph-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.title {
+    color: #FFF;
+    -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.button {
+    background-color: blueviolet;
+    border-radius: 28px;
+    padding: 10px 10px 8px;
+    font-weight: 700;
+    font-size: 18px;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+}
+
+.back-button {
+    background-color: red;
+    border-radius: 28px;
+    padding: 10px 10px 8px;
+    font-weight: 700;
+    font-size: 18px;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: aqua;
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
+}
+
+.back-button:hover {
+    cursor: pointer;
+    background-color: salmon;
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
+}

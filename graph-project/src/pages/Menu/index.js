@@ -14,7 +14,7 @@ function Menu() {
         <>
             <body className={styles['menu-body']}>
                 <div className={styles.container}>
-                    <h1 data-text='Graph Project' className={styles.title}>Graph Projet</h1>
+                    <h1 data-text='Gramor (Grafos + Amor)' className={styles.title}>Gramor (Grafos + Amor)</h1>
                     <p className={styles.subtitle}>Select the type of graph you want to generate</p>
                     <div className={styles['button-container']}>
                         <button className={styles.button} onClick={() => handleUserClick('1')}>Non-directed Graph</button>
