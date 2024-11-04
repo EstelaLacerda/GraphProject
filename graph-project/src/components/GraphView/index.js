@@ -14,6 +14,7 @@ const GraphView = ({ graphType, weight }) => {
     const [nodeLabel, setNodeLabel] = useState('');
     const [sourceNode, setSourceNode] = useState('');
     const [targetNode, setTargetNode] = useState('');
+    const [edgeWeight, setEdgeWeight] = useState('');
 
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
@@ -31,7 +32,11 @@ const GraphView = ({ graphType, weight }) => {
     const addEdge = () => {
         if (sourceNode && targetNode) {
             const newEdge = {
-                data: { source: sourceNode, target: targetNode }
+                data: { 
+                    source: sourceNode, 
+                    target: targetNode, 
+                    weight: edgeWeight || null
+                }
             };
             setGraphData((prev) => ({
                 nodes: prev.nodes,
@@ -39,6 +44,7 @@ const GraphView = ({ graphType, weight }) => {
             }));
             setSourceNode('');
             setTargetNode('');
+            setEdgeWeight('');
         }
     };
 
@@ -78,9 +84,9 @@ const GraphView = ({ graphType, weight }) => {
                     <div className={styles['input-container']}>
                         <input
                             type="text"
-                            value={targetNode}
-                            onChange={(e) => setTargetNode(e.target.value)}
-                            placeholder="Line Weight"
+                            value={edgeWeight}
+                            onChange={(e) => setEdgeWeight(e.target.value)}
+                            placeholder="Edge Weight"
                         />
                     </div>
                 )}
@@ -121,7 +127,8 @@ const GraphView = ({ graphType, weight }) => {
                                 "line-color": "yellow",
                                 "target-arrow-color": "yellow",
                                 "target-arrow-shape": "triangle",
-                                "curve-style": "bezier"
+                                "curve-style": "bezier",
+                                label: "data(weight)"
                             }
                         }
                     ]}
