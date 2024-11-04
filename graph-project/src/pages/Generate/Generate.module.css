@@ -1,0 +1,14 @@
+.generate-body {
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 15;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.title {
+    color: #FFF;
+}

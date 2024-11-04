@@ -14,10 +14,10 @@ function Graph() {
         } else if (graphType === '2') {
             return 'Directed graph';
         }
-    }
+    };
 
-    const handleUserClick = (graphType) => {
-        navigate(`/generate/${graphType}`);
+    const handleUserClick = (weight) => {
+        navigate(`/generate/${graphType}/${weight}`);
     };
 
     const backHome = () => {
@@ -31,7 +31,7 @@ function Graph() {
                     <h1 className={styles.title}>{getGraphType()}</h1>
                     <div className={styles['button-container']}>
                         <button className={styles.button} onClick={() => handleUserClick('1')}>Weighted Graph</button>
-                        <button className={styles.button} onClick={() => handleUserClick('2')}>Non-Weighted Graph</button>
+                        <button className={styles.button} onClick={() => handleUserClick('0')}>Non-Weighted Graph</button>
                         <button className={styles['back-button']} onClick={() => backHome()}>Go back</button>
                     </div>
                 </div>
