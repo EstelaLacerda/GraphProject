@@ -63,25 +63,34 @@ const GraphView = ({ graphType, weight }) => {
     };
 
     const removeNode = () => {
-        const nodeExists = graphData.nodes.some(node => node.data.id === nodeIdToRemove);
+    const nodeIdsToRemove = nodeIdToRemove.split(',').map(id => id.trim());
 
-        if (!nodeExists) {
-            alert(`Node with ID ${nodeIdToRemove} does not exist.`);
-            return;
-        }
+    const nodesExist = nodeIdsToRemove.some(id => 
+        graphData.nodes.some(node => node.data.id === id)
+    );
 
-        setGraphData((prev) => {
-            const updatedNodes = prev.nodes.filter(node => node.data.id !== nodeIdToRemove);
-            const updatedEdges = prev.edges.filter(
-                edge => edge.data.source !== nodeIdToRemove && edge.data.target !== nodeIdToRemove
-            );
-            return {
-                nodes: updatedNodes,
-                edges: updatedEdges
-            };
-        });
-        setNodeIdToRemove('');
-    };
+    if (!nodesExist) {
+        alert(`One or more nodes with IDs ${nodeIdsToRemove.join(', ')} do not exist.`);
+        return;
+    }
+
+    setGraphData((prev) => {
+        const updatedNodes = prev.nodes.filter(
+            node => !nodeIdsToRemove.includes(node.data.id)
+        );
+        const updatedEdges = prev.edges.filter(
+            edge => !nodeIdsToRemove.includes(edge.data.source) && 
+                    !nodeIdsToRemove.includes(edge.data.target)
+        );
+        return {
+            nodes: updatedNodes,
+            edges: updatedEdges
+        };
+    });
+
+    setNodeIdToRemove('');
+};
+
 
     const elements = [
         ...graphData.nodes.map(node => ({ data: node.data })),
