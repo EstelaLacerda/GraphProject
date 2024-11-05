@@ -17,20 +17,21 @@ const GraphView = ({ graphType, weight }) => {
     const [targetNode, setTargetNode] = useState('');
     const [edgeWeight, setEdgeWeight] = useState('');
 
+
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
-            const centerX = parseInt(width) / 2;
-            const centerY = parseInt(height) / 2;
-
-            const newNode = {
-                data: { id: `${graphData.nodes.length + 1}`, label: nodeLabel },
-                position: { x: centerX, y: centerY }
-            };
-
-            setGraphData((prev) => ({
-                nodes: [...prev.nodes, newNode],
+            const labels = nodeLabel.split(',').map(label => label.trim());
+    
+            const newNodes = labels.map((label, index) => ({
+                data: { id: `${graphData.nodes.length + index + 1}`, label },
+                position: { x: parseInt(width) / 2, y: parseInt(height) / 2 }
+            }));
+    
+            setGraphData(prev => ({
+                nodes: [...prev.nodes, ...newNodes],
                 edges: prev.edges
             }));
+    
             setNodeLabel('');
         }
     };
