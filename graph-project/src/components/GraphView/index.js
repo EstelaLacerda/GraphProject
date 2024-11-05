@@ -18,9 +18,14 @@ const GraphView = ({ graphType, weight }) => {
 
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
+            const centerX = parseInt(width) / 2;
+            const centerY = parseInt(height) / 2;
+
             const newNode = {
-                data: { id: `${graphData.nodes.length + 1}`, label: nodeLabel }
+                data: { id: `${graphData.nodes.length + 1}`, label: nodeLabel },
+                position: { x: centerX, y: centerY }
             };
+
             setGraphData((prev) => ({
                 nodes: [...prev.nodes, newNode],
                 edges: prev.edges
@@ -30,7 +35,6 @@ const GraphView = ({ graphType, weight }) => {
     };
 
     const addEdge = () => {
-        // Verifica se os IDs de sourceNode e targetNode realmente existem em graphData.nodes
         const sourceExists = graphData.nodes.some(node => node.data.id === sourceNode);
         const targetExists = graphData.nodes.some(node => node.data.id === targetNode);
 
@@ -43,13 +47,11 @@ const GraphView = ({ graphType, weight }) => {
                 }
             };
 
-            // Atualiza o estado com a nova aresta
             setGraphData((prev) => ({
                 nodes: prev.nodes,
                 edges: [...prev.edges, newEdge]
             }));
 
-            // Limpa os inputs após adicionar a aresta
             setSourceNode('');
             setTargetNode('');
             setEdgeWeight('');
@@ -63,7 +65,6 @@ const GraphView = ({ graphType, weight }) => {
         ...graphData.nodes.map(node => ({ data: node.data })),
         ...graphData.edges.map(edge => ({ data: edge.data }))
     ];
-
 
     return (
         <div className={styles['graph-container']}>
@@ -84,7 +85,7 @@ const GraphView = ({ graphType, weight }) => {
                         type="text"
                         value={sourceNode}
                         onChange={(e) => setSourceNode(e.target.value)}
-                        placeholder="Source Node ID"
+                        placeholder={graphType === '1' ? "First node" : "Source Node ID"}
                     />
                 </div>
                 <div className={styles['input-container']}>
@@ -92,13 +93,13 @@ const GraphView = ({ graphType, weight }) => {
                         type="text"
                         value={targetNode}
                         onChange={(e) => setTargetNode(e.target.value)}
-                        placeholder="Target Node ID"
+                        placeholder={graphType === '1' ? "Second node" : "Target Node ID"}
                     />
                 </div>
                 {weight === '1' && (
                     <div className={styles['input-container']}>
                         <input
-                            type="text"
+                            type="number"
                             value={edgeWeight}
                             onChange={(e) => setEdgeWeight(e.target.value)}
                             placeholder="Edge Weight"
@@ -140,10 +141,14 @@ const GraphView = ({ graphType, weight }) => {
                             style: {
                                 width: 3,
                                 "line-color": "yellow",
-                                "target-arrow-color": "yellow",
-                                "target-arrow-shape": "triangle",
                                 "curve-style": "bezier",
-                                label: "data(weight)"
+                                label: "data(weight)",
+                                ...(graphType === '1'
+                                    ? {}
+                                    : {
+                                        "target-arrow-color": "yellow",
+                                        "target-arrow-shape": "triangle"
+                                    })
                             }
                         }
                     ]}
