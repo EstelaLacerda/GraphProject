@@ -30,25 +30,40 @@ const GraphView = ({ graphType, weight }) => {
     };
 
     const addEdge = () => {
-        if (sourceNode && targetNode) {
+        // Verifica se os IDs de sourceNode e targetNode realmente existem em graphData.nodes
+        const sourceExists = graphData.nodes.some(node => node.data.id === sourceNode);
+        const targetExists = graphData.nodes.some(node => node.data.id === targetNode);
+
+        if (sourceExists && targetExists) {
             const newEdge = {
-                data: { 
-                    source: sourceNode, 
-                    target: targetNode, 
+                data: {
+                    source: sourceNode,
+                    target: targetNode,
                     weight: edgeWeight || null
                 }
             };
+
+            // Atualiza o estado com a nova aresta
             setGraphData((prev) => ({
                 nodes: prev.nodes,
                 edges: [...prev.edges, newEdge]
             }));
+
+            // Limpa os inputs após adicionar a aresta
             setSourceNode('');
             setTargetNode('');
             setEdgeWeight('');
+        } else {
+            alert("Failed! Verify if source and target nodes really exists.");
         }
     };
 
-    const elements = [...graphData.nodes, ...graphData.edges];
+
+    const elements = [
+        ...graphData.nodes.map(node => ({ data: node.data })),
+        ...graphData.edges.map(edge => ({ data: edge.data }))
+    ];
+
 
     return (
         <div className={styles['graph-container']}>
