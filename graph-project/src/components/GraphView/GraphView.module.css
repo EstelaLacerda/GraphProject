@@ -44,6 +44,23 @@
     box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
 }
 
+.remove-button {
+    background-color: red;
+    border-radius: 28px;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+}
+
+.remove-button:hover {
+    cursor: pointer;
+    background-color: salmon;
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
+}
+
 .lower-input {
     display: flex;
     gap: 10px;

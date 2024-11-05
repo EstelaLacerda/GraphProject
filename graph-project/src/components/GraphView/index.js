@@ -13,6 +13,7 @@ const GraphView = ({ graphType, weight }) => {
 
     const [nodeLabel, setNodeLabel] = useState('');
     const [sourceNode, setSourceNode] = useState('');
+    const [nodeIdToRemove, setNodeIdToRemove] = useState('');
     const [targetNode, setTargetNode] = useState('');
     const [edgeWeight, setEdgeWeight] = useState('');
 
@@ -60,6 +61,26 @@ const GraphView = ({ graphType, weight }) => {
         }
     };
 
+    const removeNode = () => {
+        const nodeExists = graphData.nodes.some(node => node.data.id === nodeIdToRemove);
+
+        if (!nodeExists) {
+            alert(`Node with ID ${nodeIdToRemove} does not exist.`);
+            return;
+        }
+
+        setGraphData((prev) => {
+            const updatedNodes = prev.nodes.filter(node => node.data.id !== nodeIdToRemove);
+            const updatedEdges = prev.edges.filter(
+                edge => edge.data.source !== nodeIdToRemove && edge.data.target !== nodeIdToRemove
+            );
+            return {
+                nodes: updatedNodes,
+                edges: updatedEdges
+            };
+        });
+        setNodeIdToRemove('');
+    };
 
     const elements = [
         ...graphData.nodes.map(node => ({ data: node.data })),
@@ -78,6 +99,15 @@ const GraphView = ({ graphType, weight }) => {
                     />
                 </div>
                 <button className={styles['graph-button']} onClick={addNode}>Add Node</button>
+                <div className={styles['input-container']}>
+                    <input
+                        type="text"
+                        value={nodeIdToRemove}
+                        onChange={(e) => setNodeIdToRemove(e.target.value)}
+                        placeholder="Node ID to Remove"
+                    />
+                </div>
+                <button className={styles['remove-button']} onClick={removeNode}>Remove Node</button>
             </div>
             <div className={styles['lower-input']}>
                 <div className={styles['input-container']}>
