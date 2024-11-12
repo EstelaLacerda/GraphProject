@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import styles from './GraphView.module.css';
 
@@ -17,21 +17,29 @@ const GraphView = ({ graphType, weight }) => {
     const [targetNode, setTargetNode] = useState('');
     const [edgeWeight, setEdgeWeight] = useState('');
 
+    const [order, setOrder] = useState(0); // Número de nós
+    const [size, setSize] = useState(0); // Número de arestas
+
+    useEffect(() => {
+        // Atualize a ordem e o tamanho do grafo sempre que `graphData` mudar
+        setOrder(graphData.nodes.length);
+        setSize(graphData.edges.length);
+    }, [graphData]);
 
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
             const labels = nodeLabel.split(',').map(label => label.trim());
-    
+
             const newNodes = labels.map((label, index) => ({
                 data: { id: `${graphData.nodes.length + index + 1}`, label },
                 position: { x: parseInt(width) / 2, y: parseInt(height) / 2 }
             }));
-    
+
             setGraphData(prev => ({
                 nodes: [...prev.nodes, ...newNodes],
                 edges: prev.edges
             }));
-    
+
             setNodeLabel('');
         }
     };
@@ -63,34 +71,33 @@ const GraphView = ({ graphType, weight }) => {
     };
 
     const removeNode = () => {
-    const nodeIdsToRemove = nodeIdToRemove.split(',').map(id => id.trim());
+        const nodeIdsToRemove = nodeIdToRemove.split(',').map(id => id.trim());
 
-    const nodesExist = nodeIdsToRemove.some(id => 
-        graphData.nodes.some(node => node.data.id === id)
-    );
-
-    if (!nodesExist) {
-        alert(`One or more nodes with IDs ${nodeIdsToRemove.join(', ')} do not exist.`);
-        return;
-    }
-
-    setGraphData((prev) => {
-        const updatedNodes = prev.nodes.filter(
-            node => !nodeIdsToRemove.includes(node.data.id)
+        const nodesExist = nodeIdsToRemove.some(id =>
+            graphData.nodes.some(node => node.data.id === id)
         );
-        const updatedEdges = prev.edges.filter(
-            edge => !nodeIdsToRemove.includes(edge.data.source) && 
+
+        if (!nodesExist) {
+            alert(`One or more nodes with IDs ${nodeIdsToRemove.join(', ')} do not exist.`);
+            return;
+        }
+
+        setGraphData((prev) => {
+            const updatedNodes = prev.nodes.filter(
+                node => !nodeIdsToRemove.includes(node.data.id)
+            );
+            const updatedEdges = prev.edges.filter(
+                edge => !nodeIdsToRemove.includes(edge.data.source) &&
                     !nodeIdsToRemove.includes(edge.data.target)
-        );
-        return {
-            nodes: updatedNodes,
-            edges: updatedEdges
-        };
-    });
+            );
+            return {
+                nodes: updatedNodes,
+                edges: updatedEdges
+            };
+        });
 
-    setNodeIdToRemove('');
-};
-
+        setNodeIdToRemove('');
+    };
 
     const elements = [
         ...graphData.nodes.map(node => ({ data: node.data })),
@@ -99,54 +106,62 @@ const GraphView = ({ graphType, weight }) => {
 
     return (
         <div className={styles['graph-container']}>
-            <div className={styles['upper-input']}>
-                <div className={styles['input-container']}>
-                    <input
-                        type="text"
-                        value={nodeLabel}
-                        onChange={(e) => setNodeLabel(e.target.value)}
-                        placeholder="Node Label"
-                    />
-                </div>
-                <button className={styles['graph-button']} onClick={addNode}>Add Node</button>
-                <div className={styles['input-container']}>
-                    <input
-                        type="text"
-                        value={nodeIdToRemove}
-                        onChange={(e) => setNodeIdToRemove(e.target.value)}
-                        placeholder="Node ID to Remove"
-                    />
-                </div>
-                <button className={styles['remove-button']} onClick={removeNode}>Remove Node</button>
-            </div>
-            <div className={styles['lower-input']}>
-                <div className={styles['input-container']}>
-                    <input
-                        type="text"
-                        value={sourceNode}
-                        onChange={(e) => setSourceNode(e.target.value)}
-                        placeholder={graphType === '1' ? "First node" : "Source Node ID"}
-                    />
-                </div>
-                <div className={styles['input-container']}>
-                    <input
-                        type="text"
-                        value={targetNode}
-                        onChange={(e) => setTargetNode(e.target.value)}
-                        placeholder={graphType === '1' ? "Second node" : "Target Node ID"}
-                    />
-                </div>
-                {weight === '1' && (
-                    <div className={styles['input-container']}>
-                        <input
-                            type="number"
-                            value={edgeWeight}
-                            onChange={(e) => setEdgeWeight(e.target.value)}
-                            placeholder="Edge Weight"
-                        />
+            <div className={styles['graph-header']}>
+                <div className={styles['graph-input']}>
+                    <div className={styles['upper-input']}>
+                        <div className={styles['input-container']}>
+                            <input
+                                type="text"
+                                value={nodeLabel}
+                                onChange={(e) => setNodeLabel(e.target.value)}
+                                placeholder="Node Label"
+                            />
+                        </div>
+                        <button className={styles['graph-button']} onClick={addNode}>Add Node</button>
+                        <div className={styles['input-container']}>
+                            <input
+                                type="text"
+                                value={nodeIdToRemove}
+                                onChange={(e) => setNodeIdToRemove(e.target.value)}
+                                placeholder="Node ID to Remove"
+                            />
+                        </div>
+                        <button className={styles['remove-button']} onClick={removeNode}>Remove Node</button>
                     </div>
-                )}
-                <button className={styles['graph-button']} onClick={addEdge}>Add Edge</button>
+                    <div className={styles['lower-input']}>
+                        <div className={styles['input-container']}>
+                            <input
+                                type="text"
+                                value={sourceNode}
+                                onChange={(e) => setSourceNode(e.target.value)}
+                                placeholder={graphType === '1' ? "First node" : "Source Node ID"}
+                            />
+                        </div>
+                        <div className={styles['input-container']}>
+                            <input
+                                type="text"
+                                value={targetNode}
+                                onChange={(e) => setTargetNode(e.target.value)}
+                                placeholder={graphType === '1' ? "Second node" : "Target Node ID"}
+                            />
+                        </div>
+                        {weight === '1' && (
+                            <div className={styles['input-container']}>
+                                <input
+                                    type="number"
+                                    value={edgeWeight}
+                                    onChange={(e) => setEdgeWeight(e.target.value)}
+                                    placeholder="Edge Weight"
+                                />
+                            </div>
+                        )}
+                        <button className={styles['graph-button']} onClick={addEdge}>Add Edge</button>
+                    </div>
+                </div>
+                <div className={styles['graph-info']}>
+                    <p>Ordem do Grafo (Número de Nós): {order}</p>
+                    <p>Tamanho do Grafo (Número de Arestas): {size}</p>
+                </div>
             </div>
             <div className={styles['graph']}>
                 <CytoscapeComponent
