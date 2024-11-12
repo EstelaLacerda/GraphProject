@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import styles from './GraphView.module.css';
+import jsPDF from 'jspdf';
+import { useRef } from 'react';
 
 const GraphView = ({ graphType, weight }) => {
     const [width] = useState("100%");
@@ -30,11 +32,11 @@ const GraphView = ({ graphType, weight }) => {
             const labels = nodeLabel.split(',').map(label => label.trim());
 
             const newNodes = labels.map((label, index) => {
-                const id = `${graphData.nodes.length + index + 1}`;
+                const id = graphData.nodes.length + index + 1;
                 return {
                     data: { id, label: `${id}: ${label}` },
                     position: { x: parseInt(width) / 2, y: parseInt(height) / 2 }
-                };
+                }
             });
             
 
@@ -102,6 +104,58 @@ const GraphView = ({ graphType, weight }) => {
         setNodeIdToRemove('');
     };
 
+    const cyRef = useRef(null);
+
+    const getTitle = () => {
+        const typeTitle = graphType === '1' ? 'Non-directed' : 'Directed';
+        const weightTitle = weight === '1' ? 'Weighted Graph' : 'Non-weighted Graph';
+        return `${typeTitle} - ${weightTitle}`;
+    };
+
+    const downloadGraphAsPDF = () => {
+        if (cyRef.current) {
+            const pngData = cyRef.current.png({ full: true, scale: 3 });
+    
+            const graphDiv = document.querySelector(`.${styles['graph']}`);
+            const graphWidth = graphDiv.offsetWidth;
+            const graphHeight = graphDiv.offsetHeight;
+    
+            const pdf = new jsPDF('landscape', 'pt', [graphWidth, graphHeight]);
+    
+            const title = getTitle();
+            pdf.setFontSize(24);
+            pdf.setFont("helvetica", "bold");
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const titleWidth = pdf.getTextWidth(title);
+    
+            const titleYPosition = 40;
+            pdf.text(title, (pdfWidth - titleWidth) / 2, titleYPosition);
+    
+            const margin = 20;
+    
+            const imgProps = pdf.getImageProperties(pngData);
+            const imgWidth = graphWidth;
+            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+    
+            const availableHeight = graphHeight - titleYPosition - margin;
+    
+            const scaleFactor = Math.min(graphWidth / imgWidth, (availableHeight) / imgHeight);
+            const finalImgWidth = imgWidth * scaleFactor;
+            const finalImgHeight = imgHeight * scaleFactor;
+    
+            const yPosition = titleYPosition + margin;
+    
+            const graphRect = graphDiv.getBoundingClientRect();
+            const xPosition = (pdfWidth - finalImgWidth) / 2;
+    
+            pdf.addImage(pngData, 'PNG', xPosition, yPosition, finalImgWidth, finalImgHeight);
+    
+            // Salve o PDF gerado
+            pdf.save('graph.pdf');
+        }
+    };
+      
+    
     const elements = [
         ...graphData.nodes.map(node => ({ data: node.data })),
         ...graphData.edges.map(edge => ({ data: edge.data }))
@@ -130,6 +184,7 @@ const GraphView = ({ graphType, weight }) => {
                             />
                         </div>
                         <button className={styles['remove-button']} onClick={removeNode}>Remove Node</button>
+                        <button className={styles['graph-button']} onClick={downloadGraphAsPDF}>Download PDF</button>
                     </div>
                     <div className={styles['lower-input']}>
                         <div className={styles['input-container']}>
@@ -168,6 +223,7 @@ const GraphView = ({ graphType, weight }) => {
             </div>
             <div className={styles['graph']}>
                 <CytoscapeComponent
+                    cy={(cy) => (cyRef.current = cy)}
                     elements={elements}
                     style={{ width: width, height: height }}
                     layout={{
