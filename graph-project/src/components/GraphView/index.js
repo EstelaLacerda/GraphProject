@@ -21,7 +21,6 @@ const GraphView = ({ graphType, weight }) => {
     const [size, setSize] = useState(0); // Número de arestas
 
     useEffect(() => {
-        // Atualize a ordem e o tamanho do grafo sempre que `graphData` mudar
         setOrder(graphData.nodes.length);
         setSize(graphData.edges.length);
     }, [graphData]);
@@ -30,10 +29,14 @@ const GraphView = ({ graphType, weight }) => {
         if (nodeLabel.trim() !== '') {
             const labels = nodeLabel.split(',').map(label => label.trim());
 
-            const newNodes = labels.map((label, index) => ({
-                data: { id: `${graphData.nodes.length + index + 1}`, label },
-                position: { x: parseInt(width) / 2, y: parseInt(height) / 2 }
-            }));
+            const newNodes = labels.map((label, index) => {
+                const id = `${graphData.nodes.length + index + 1}`;
+                return {
+                    data: { id, label: `${id}: ${label}` },
+                    position: { x: parseInt(width) / 2, y: parseInt(height) / 2 }
+                };
+            });
+            
 
             setGraphData(prev => ({
                 nodes: [...prev.nodes, ...newNodes],
