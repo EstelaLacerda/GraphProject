@@ -18,14 +18,27 @@ const GraphView = ({ graphType, weight }) => {
     const [nodeIdToRemove, setNodeIdToRemove] = useState('');
     const [targetNode, setTargetNode] = useState('');
     const [edgeWeight, setEdgeWeight] = useState('');
+    const [vertexId, setVertexId] = useState('');
+    const [vertexDegree, setVertexDegree] = useState(null);
 
-    const [order, setOrder] = useState(0); // Número de nós
-    const [size, setSize] = useState(0); // Número de arestas
+    const [order, setOrder] = useState(0);
+    const [size, setSize] = useState(0);
 
     useEffect(() => {
         setOrder(graphData.nodes.length);
         setSize(graphData.edges.length);
     }, [graphData]);
+
+    const calculateVertexDegree = () => {
+        const degree = graphData.edges.reduce((count, edge) => {
+            if (edge.data.source === vertexId || edge.data.target === vertexId) {
+                return count + 1;
+            }
+            return count;
+        }, 0);
+
+        setVertexDegree(degree);
+    };
 
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
@@ -38,7 +51,6 @@ const GraphView = ({ graphType, weight }) => {
                     position: { x: parseInt(width) / 2, y: parseInt(height) / 2 }
                 }
             });
-            
 
             setGraphData(prev => ({
                 nodes: [...prev.nodes, ...newNodes],
@@ -71,7 +83,7 @@ const GraphView = ({ graphType, weight }) => {
             setTargetNode('');
             setEdgeWeight('');
         } else {
-            alert("Failed! Verify if source and target nodes really exists.");
+            alert("Failed! Verify if source and target nodes really exist.");
         }
     };
 
@@ -115,47 +127,44 @@ const GraphView = ({ graphType, weight }) => {
     const downloadGraphAsPDF = () => {
         if (cyRef.current) {
             const pngData = cyRef.current.png({ full: true, scale: 3 });
-    
+
             const graphDiv = document.querySelector(`.${styles['graph']}`);
             const graphWidth = graphDiv.offsetWidth;
             const graphHeight = graphDiv.offsetHeight;
-    
+
             const pdf = new jsPDF('landscape', 'pt', [graphWidth, graphHeight]);
-    
+
             const title = getTitle();
             pdf.setFontSize(24);
             pdf.setFont("helvetica", "bold");
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const titleWidth = pdf.getTextWidth(title);
-    
+
             const titleYPosition = 40;
             pdf.text(title, (pdfWidth - titleWidth) / 2, titleYPosition);
-    
+
             const margin = 20;
-    
+
             const imgProps = pdf.getImageProperties(pngData);
             const imgWidth = graphWidth;
             const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-    
+
             const availableHeight = graphHeight - titleYPosition - margin;
-    
+
             const scaleFactor = Math.min(graphWidth / imgWidth, (availableHeight) / imgHeight);
             const finalImgWidth = imgWidth * scaleFactor;
             const finalImgHeight = imgHeight * scaleFactor;
-    
+
             const yPosition = titleYPosition + margin;
-    
-            const graphRect = graphDiv.getBoundingClientRect();
+
             const xPosition = (pdfWidth - finalImgWidth) / 2;
-    
+
             pdf.addImage(pngData, 'PNG', xPosition, yPosition, finalImgWidth, finalImgHeight);
-    
-            // Salve o PDF gerado
+
             pdf.save('graph.pdf');
         }
     };
-      
-    
+
     const elements = [
         ...graphData.nodes.map(node => ({ data: node.data })),
         ...graphData.edges.map(edge => ({ data: edge.data }))
@@ -215,6 +224,16 @@ const GraphView = ({ graphType, weight }) => {
                         )}
                         <button className={styles['graph-button']} onClick={addEdge}>Add Edge</button>
                     </div>
+                    <div className={styles['vertex-degree']}>
+                        <input
+                            type="text"
+                            value={vertexId}
+                            onChange={(e) => setVertexId(e.target.value)}
+                            placeholder="Enter Vertex ID for Degree"
+                        />
+                        <button onClick={calculateVertexDegree}>Calculate Degree</button>
+                        {vertexDegree !== null && <p>Degree of Vertex {vertexId}: {vertexDegree}</p>}
+                    </div>
                 </div>
                 <div className={styles['graph-info']}>
                     <p>Ordem do Grafo (Número de Nós): {order}</p>
@@ -227,42 +246,39 @@ const GraphView = ({ graphType, weight }) => {
                     elements={elements}
                     style={{ width: width, height: height }}
                     layout={{
-                        name: graphType === '1' ? 'concentric' : 'breadthfirst',
+                        name: 'cose',
+                        idealEdgeLength: 100,
+                        nodeRepulsion: 400000,
+                        nodeOverlap: 10,
                         fit: true,
-                        directed: graphType === '2',
                         padding: 50,
                         animate: true,
-                        animationDuration: 1000,
-                        avoidOverlap: true,
-                        nodeDimensionsIncludeLabels: false
+                        componentSpacing: 100,
+                        numIter: 1000,
+                        coolingFactor: 0.99,
+                        gravity: 200,
+                        initialTemp: 1000
                     }}
                     stylesheet={[
                         {
-                            selector: "node",
+                            selector: 'node',
                             style: {
-                                backgroundColor: "#666",
-                                width: 60,
-                                height: 60,
-                                label: "data(label)",
-                                "text-valign": "center",
-                                "text-halign": "center",
-                                "overlay-padding": "6px",
-                                "z-index": "10"
+                                label: 'data(label)',
+                                backgroundColor: '#69b3a2',
+                                color: 'black',
+                                fontWeight: 'bold',
+                                textValign: 'center',
+                                textHalign: 'center'
                             }
                         },
                         {
-                            selector: "edge",
+                            selector: 'edge',
                             style: {
                                 width: 3,
-                                "line-color": "yellow",
-                                "curve-style": "bezier",
-                                label: "data(weight)",
-                                ...(graphType === '1'
-                                    ? {}
-                                    : {
-                                        "target-arrow-color": "yellow",
-                                        "target-arrow-shape": "triangle"
-                                    })
+                                lineColor: '#ff6347',
+                                targetArrowColor: '#ff6347',
+                                targetArrowShape: graphType === '1' ? 'none' : 'triangle',
+                                label: weight === '1' ? 'data(weight)' : ''
                             }
                         }
                     ]}
