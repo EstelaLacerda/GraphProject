@@ -18,6 +18,66 @@
     gap: 20px;
 }
 
+.open-menu-button {
+    display: block;
+    background-color: blueviolet;
+    border-radius: 28px;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+}
+
+.open-menu-button:hover {
+    cursor: pointer;
+    background-color: aqua;
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
+}
+
+.graph-info {
+    position: relative;
+    padding: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    width: 250px;
+    text-align: center;
+    color: white;
+}
+
+.close-menu-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.info-options button,
+.info-menu {
+    margin: 10px 0;
+    background-color: blueviolet;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.info-options button:hover,
+.info-menu:hover {
+    cursor: pointer;
+    color: #000;
+    background-color: aqua;
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
+}
+
 .graph-info {
     background-color: rgba(255, 255, 255, 0.2);
     color: #fff;

@@ -25,6 +25,7 @@ const GraphView = ({ graphType, weight }) => {
     const [size, setSize] = useState(0);
 
     const [menuOption, setMenuOption] = useState('');
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
 
     useEffect(() => {
         setOrder(graphData.nodes.length);
@@ -197,7 +198,7 @@ const GraphView = ({ graphType, weight }) => {
                     </div>
                 );
             case 'downloadPDF':
-                return(
+                return (
                     <div className={styles['pdf-section']}>
                         <button className={styles['graph-button']} onClick={downloadGraphAsPDF}>Download PDF</button>
                     </div>
@@ -267,10 +268,26 @@ const GraphView = ({ graphType, weight }) => {
                         <button className={styles['graph-button']} onClick={addEdge}>Add Edge</button>
                     </div>
                 </div>
-                <div className={styles['graph-info']}>
-                    {menuOption && <button className={styles['info-menu']} onClick={() => setMenuOption('')}>Voltar ao Menu</button>}
-                    {renderMenuContent()}
-                </div>
+                {!isMenuVisible && (
+                    <button
+                        className={styles['open-menu-button']}
+                        onClick={() => setIsMenuVisible(true)}
+                    >
+                        Show Menu
+                    </button>
+                )}
+                {isMenuVisible && (
+                    <div className={styles['graph-info']}>
+                        <button
+                            className={styles['close-menu-button']}
+                            onClick={() => setIsMenuVisible(false)}
+                        >
+                            ✖
+                        </button>
+                        <button className={styles['info-menu']} onClick={() => setMenuOption('')}>Back to Options</button>
+                        {renderMenuContent()}
+                    </div>
+                )}
             </div>
             <div className={styles['graph']}>
                 <CytoscapeComponent
