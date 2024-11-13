@@ -24,6 +24,8 @@ const GraphView = ({ graphType, weight }) => {
     const [order, setOrder] = useState(0);
     const [size, setSize] = useState(0);
 
+    const [menuOption, setMenuOption] = useState('');
+
     useEffect(() => {
         setOrder(graphData.nodes.length);
         setSize(graphData.edges.length);
@@ -170,6 +172,47 @@ const GraphView = ({ graphType, weight }) => {
         ...graphData.edges.map(edge => ({ data: edge.data }))
     ];
 
+    const renderMenuContent = () => {
+        switch (menuOption) {
+            case 'orderSize':
+                return (
+                    <div className={styles['order-size-info']}>
+                        <p>Graph order: {order}</p>
+                        <p>Graph size: {size}</p>
+                    </div>
+                );
+            case 'vertexDegree':
+                return (
+                    <div className={styles['vertex-degree']}>
+                        <div className={styles['input-degree']}>
+                            <input
+                                type="text"
+                                value={vertexId}
+                                onChange={(e) => setVertexId(e.target.value)}
+                                placeholder="Enter Vertex ID for Degree"
+                            />
+                        </div>
+                        <button className={styles['degree-button']} onClick={calculateVertexDegree}>Calculate Degree</button>
+                        {vertexDegree !== null && <p>Degree of Vertex {vertexId}: {vertexDegree}</p>}
+                    </div>
+                );
+            case 'downloadPDF':
+                return(
+                    <div className={styles['pdf-section']}>
+                        <button className={styles['graph-button']} onClick={downloadGraphAsPDF}>Download PDF</button>
+                    </div>
+                );
+            default:
+                return (
+                    <div className={styles['info-options']}>
+                        <button onClick={() => setMenuOption('orderSize')}>See order and size</button>
+                        <button onClick={() => setMenuOption('vertexDegree')}>See vertex degree</button>
+                        <button onClick={() => setMenuOption('downloadPDF')}>Download Graph as PDF</button>
+                    </div>
+                );
+        }
+    };
+
     return (
         <div className={styles['graph-container']}>
             <div className={styles['graph-header']}>
@@ -193,7 +236,6 @@ const GraphView = ({ graphType, weight }) => {
                             />
                         </div>
                         <button className={styles['remove-button']} onClick={removeNode}>Remove Node</button>
-                        <button className={styles['graph-button']} onClick={downloadGraphAsPDF}>Download PDF</button>
                     </div>
                     <div className={styles['lower-input']}>
                         <div className={styles['input-container']}>
@@ -224,20 +266,10 @@ const GraphView = ({ graphType, weight }) => {
                         )}
                         <button className={styles['graph-button']} onClick={addEdge}>Add Edge</button>
                     </div>
-                    <div className={styles['vertex-degree']}>
-                        <input
-                            type="text"
-                            value={vertexId}
-                            onChange={(e) => setVertexId(e.target.value)}
-                            placeholder="Enter Vertex ID for Degree"
-                        />
-                        <button onClick={calculateVertexDegree}>Calculate Degree</button>
-                        {vertexDegree !== null && <p>Degree of Vertex {vertexId}: {vertexDegree}</p>}
-                    </div>
                 </div>
                 <div className={styles['graph-info']}>
-                    <p>Ordem do Grafo (Número de Nós): {order}</p>
-                    <p>Tamanho do Grafo (Número de Arestas): {size}</p>
+                    {menuOption && <button className={styles['info-menu']} onClick={() => setMenuOption('')}>Voltar ao Menu</button>}
+                    {renderMenuContent()}
                 </div>
             </div>
             <div className={styles['graph']}>
