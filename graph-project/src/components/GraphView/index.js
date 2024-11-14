@@ -21,6 +21,10 @@ const GraphView = ({ graphType, weight }) => {
     const [vertexId, setVertexId] = useState('');
     const [vertexDegree, setVertexDegree] = useState(null);
 
+     // Novos estados para verificar adjacência
+    const [adjSourceNode, setAdjSourceNode] = useState('');
+    const [adjTargetNode, setAdjTargetNode] = useState('');
+
     const [order, setOrder] = useState(0);
     const [size, setSize] = useState(0);
 
@@ -83,9 +87,9 @@ const GraphView = ({ graphType, weight }) => {
     };
 
     const checkAdjacency = () => {
-        if (sourceNode && targetNode) {
-            const isAdjacent = areAdjacent(sourceNode, targetNode);
-            alert(`The vertices ${sourceNode} and ${targetNode} are ${isAdjacent ? '' : 'not '}adjacent.`);
+        if (adjSourceNode && adjTargetNode) {
+            const isAdjacent = areAdjacent(adjSourceNode, adjTargetNode);
+            alert(`The vertices ${adjSourceNode} and ${adjTargetNode} are ${isAdjacent ? '' : 'not '}adjacent.`);
         } else {
             alert("Please enter both vertices to check adjacency.");
         }
@@ -329,15 +333,15 @@ const GraphView = ({ graphType, weight }) => {
                         <h3>Check Adjacency</h3>
                         <input
                             type="text"
-                            value={sourceNode}
-                            onChange={(e) => setSourceNode(e.target.value)}
+                            value={adjSourceNode}
+                            onChange={(e) => setAdjSourceNode(e.target.value)}
                             placeholder="Enter Source Vertex ID"
                             className={styles['input']}
                         />
                         <input
                             type="text"
-                            value={targetNode}
-                            onChange={(e) => setTargetNode(e.target.value)}
+                            value={adjTargetNode}
+                            onChange={(e) => setAdjTargetNode(e.target.value)}
                             placeholder="Enter Target Vertex ID"
                             className={styles['input']}
                         />
