@@ -256,3 +256,45 @@
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 20px;
 }
+
+.matrix-display {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.matrix-display table {
+    border-collapse: collapse;
+    width: auto;
+    background-color: #ffffff; /* Fundo da tabela mais claro */
+    font-size: 16px; /* Aumenta o tamanho do texto */
+}
+
+.matrix-display th,
+.matrix-display td {
+    border: 2px solid #333333; /* Borda mais escura para destacar as células */
+    padding: 10px;
+    text-align: center;
+    color: #333333; /* Cor do texto mais escura */
+}
+
+.matrix-display th {
+    background-color: #555555; /* Cabeçalho mais escuro */
+    color: #ffffff; /* Texto do cabeçalho em branco */
+    font-weight: bold;
+}
+
+.matrix-display tr:nth-child(even) {
+    background-color: #f1f1f1; /* Cor de fundo clara para linhas pares */
+}
+
+.matrix-display tr:hover {
+    background-color: #d1d1d1; /* Realce mais visível ao passar o mouse */
+}
+
+.matrix-display td:first-child,
+.matrix-display th:first-child {
+    background-color: #777777; /* Primeira coluna com fundo escuro */
+    color: #ffffff; /* Texto da primeira coluna em branco */
+    font-weight: bold;
+}

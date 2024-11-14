@@ -27,9 +27,12 @@ const GraphView = ({ graphType, weight }) => {
     const [menuOption, setMenuOption] = useState('');
     const [isMenuVisible, setIsMenuVisible] = useState(false);
 
+    const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
+
     useEffect(() => {
         setOrder(graphData.nodes.length);
         setSize(graphData.edges.length);
+        generateAdjacencyMatrix();
     }, [graphData]);
 
     const calculateVertexDegree = () => {
@@ -41,6 +44,23 @@ const GraphView = ({ graphType, weight }) => {
         }, 0);
 
         setVertexDegree(degree);
+    };
+
+    const generateAdjacencyMatrix = () => {
+        const nodeIds = graphData.nodes.map(node => node.data.id);
+        const matrix = nodeIds.map(() => Array(nodeIds.length).fill(0));
+    
+        graphData.edges.forEach(edge => {
+            const sourceIndex = nodeIds.indexOf(edge.data.source);
+            const targetIndex = nodeIds.indexOf(edge.data.target);
+    
+            if (sourceIndex !== -1 && targetIndex !== -1) {
+                matrix[sourceIndex][targetIndex] = edge.data.weight || 1;
+                matrix[targetIndex][sourceIndex] = edge.data.weight || 1;
+            }
+        });
+    
+        setAdjacencyMatrix(matrix);
     };
 
     const addNode = () => {
@@ -197,6 +217,31 @@ const GraphView = ({ graphType, weight }) => {
                         {vertexDegree !== null && <p>Degree of Vertex {vertexId}: {vertexDegree}</p>}
                     </div>
                 );
+            case 'adjacencyMatrix':
+                return (
+                    <div className={styles['matrix-display']}>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    {graphData.nodes.map(node => (
+                                        <th key={node.data.id}>{node.data.id}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {adjacencyMatrix.map((row, i) => (
+                                    <tr key={i}>
+                                        <td>{graphData.nodes[i].data.id}</td>
+                                        {row.map((cell, j) => (
+                                            <td key={j}>{cell}</td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                );
             case 'downloadPDF':
                 return (
                     <div className={styles['pdf-section']}>
@@ -209,6 +254,7 @@ const GraphView = ({ graphType, weight }) => {
                         <button onClick={() => setMenuOption('orderSize')}>See order and size</button>
                         <button onClick={() => setMenuOption('vertexDegree')}>See vertex degree</button>
                         <button onClick={() => setMenuOption('downloadPDF')}>Download Graph as PDF</button>
+                        <button onClick={() => setMenuOption('adjacencyMatrix')}>See Adjacency Matrix</button>
                     </div>
                 );
         }
