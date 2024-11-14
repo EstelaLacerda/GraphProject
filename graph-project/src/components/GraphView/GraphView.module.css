@@ -1,14 +1,16 @@
 .graph-container {
-    width: 70%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+    gap: 15px;
 }
 
 .graph-header {
     display: flex;
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
 }
 
 .graph-input {
@@ -19,12 +21,16 @@
 }
 
 .open-menu-button {
-    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
     background-color: blueviolet;
     border-radius: 28px;
     font-weight: 700;
+    display: flex;
     justify-content: center;
     align-items: center;
+    padding: 10px;
     border: 0;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
 }
@@ -37,13 +43,25 @@
 }
 
 .graph-info {
-    position: relative;
-    padding: 20px;
-    background-color: #333;
-    border-radius: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
     width: 250px;
-    text-align: center;
+    background-color: #333;
     color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: center;
+    transition: transform 0.3s ease;
+    transform: translateX(-100%);
+}
+
+.graph-info.show {
+    transform: translateX(0);
 }
 
 .close-menu-button {
@@ -57,9 +75,14 @@
     cursor: pointer;
 }
 
+.info-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .info-options button,
 .info-menu {
-    margin: 10px 0;
     background-color: blueviolet;
     color: white;
     border: none;
@@ -67,13 +90,13 @@
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin: 10px 0;
 }
 
 .info-options button:hover,
 .info-menu:hover {
-    cursor: pointer;
-    color: #000;
     background-color: aqua;
+    color: #000;
     transform: translateY(-5px);
     box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
 }
@@ -119,7 +142,7 @@
 }
 
 .order-size-info p {
-    font-size: 12px;
+    font-size: 16px;
     text-align: center;
 }
 
@@ -150,6 +173,7 @@
 }
 
 .degree-button {
+    padding: 10px;
     background-color: blueviolet;
     border-radius: 28px;
     font-weight: 700;
@@ -218,6 +242,24 @@
     margin-right: 8px;
 }
 
+.pdf-button {
+    padding: 10px;
+    background-color: blueviolet;
+    border-radius: 28px;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+}
+
+.pdf-button:hover {
+    cursor: pointer;
+    background-color: aqua;
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
+}
+
 .graph-button {
     background-color: blueviolet;
     border-radius: 28px;
@@ -255,6 +297,9 @@
 .graph {
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 20px;
+    margin-left: 250px;
+    padding: 20px;
+    width: 70%;
 }
 
 .matrix-display {
@@ -266,36 +311,35 @@
 .matrix-display table {
     border-collapse: collapse;
     width: auto;
-    background-color: #ffffff; /* Fundo da tabela mais claro */
-    font-size: 16px; /* Aumenta o tamanho do texto */
+    background-color: #ffffff;
+    font-size: 16px;
 }
 
 .matrix-display th,
 .matrix-display td {
-    border: 2px solid #333333; /* Borda mais escura para destacar as células */
+    border: 2px solid #333333;
     padding: 10px;
     text-align: center;
-    color: #333333; /* Cor do texto mais escura */
+    color: #333333;
 }
 
 .matrix-display th {
-    background-color: #555555; /* Cabeçalho mais escuro */
-    color: #ffffff; /* Texto do cabeçalho em branco */
+    background-color: #555555;
+    color: #ffffff;
     font-weight: bold;
 }
 
 .matrix-display tr:nth-child(even) {
-    background-color: #f1f1f1; /* Cor de fundo clara para linhas pares */
+    background-color: #f1f1f1;
 }
 
 .matrix-display tr:hover {
-    background-color: #d1d1d1; /* Realce mais visível ao passar o mouse */
+    background-color: #d1d1d1;
 }
 
 .matrix-display td:first-child,
 .matrix-display th:first-child {
-    background-color: #777777; /* Primeira coluna com fundo escuro */
-    color: #ffffff; /* Texto da primeira coluna em branco */
+    background-color: #777777;
+    color: #ffffff;
     font-weight: bold;
 }
-
