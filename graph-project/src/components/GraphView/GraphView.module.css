@@ -343,3 +343,7 @@
     color: #ffffff;
     font-weight: bold;
 }
+
+.list-display th {
+    padding: 5px 10px;
+}

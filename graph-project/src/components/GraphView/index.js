@@ -262,21 +262,44 @@ const GraphView = ({ graphType, weight }) => {
             case 'adjacencyList':
                 return (
                     <div className={styles['list-display']}>
-                        <h3>Lista de Adjacência</h3>
+                        <h3>Adjacency List</h3>
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Vértice</th>
-                                    <th>Adjacentes</th>
+                                    <th>Node</th>
+                                    {graphType === '2' ? (
+                                        <>
+                                            <th>Outgoing Vertices</th>
+                                            <th>Incoming Vertices</th>
+                                        </>
+                                    ) : (
+                                        <th>Adjacents</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.keys(adjacencyList).map(nodeId => (
-                                    <tr key={nodeId}>
-                                        <td>{nodeId}</td>
-                                        <td>{adjacencyList[nodeId].join(', ')}</td>
-                                    </tr>
-                                ))}
+                                {Object.keys(adjacencyList).map(nodeId => {
+                                    if (graphType === '2') {
+                                        const outgoingVertices = adjacencyList[nodeId] || [];
+                                        const incomingVertices = Object.keys(adjacencyList).filter(
+                                            otherNode => adjacencyList[otherNode].includes(nodeId)
+                                        );
+                                        return (
+                                            <tr key={nodeId}>
+                                                <td>{nodeId}</td>
+                                                <td>{outgoingVertices.join(', ') || 'None'}</td>
+                                                <td>{incomingVertices.join(', ') || 'None'}</td>
+                                            </tr>
+                                        );
+                                    } else {
+                                        return (
+                                            <tr key={nodeId}>
+                                                <td>{nodeId}</td>
+                                                <td>{adjacencyList[nodeId].join(', ')}</td>
+                                            </tr>
+                                        );
+                                    }
+                                })}
                             </tbody>
                         </table>
                     </div>
@@ -400,7 +423,9 @@ const GraphView = ({ graphType, weight }) => {
                                 color: 'black',
                                 fontWeight: 'bold',
                                 textValign: 'center',
-                                textHalign: 'center'
+                                textHalign: 'center',
+                                width: '50px',
+                                height: '50px'
                             }
                         },
                         {
@@ -410,7 +435,10 @@ const GraphView = ({ graphType, weight }) => {
                                 lineColor: '#ff6347',
                                 targetArrowColor: '#ff6347',
                                 targetArrowShape: graphType === '1' ? 'none' : 'triangle',
-                                label: weight === '1' ? 'data(weight)' : ''
+                                label: weight === '1' ? 'data(weight)' : '',
+                                curveStyle: 'bezier',
+                                controlPointDistance: 20,
+                                controlPointWeight: 0.5
                             }
                         }
                     ]}
