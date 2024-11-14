@@ -77,6 +77,19 @@ const GraphView = ({ graphType, weight }) => {
         setAdjacencyList(list);
     };
 
+    const areAdjacent = (vertex1, vertex2) => {
+        const adjacentVertices = adjacencyList[vertex1];
+        return adjacentVertices ? adjacentVertices.includes(vertex2) : false;
+    };
+
+    const checkAdjacency = () => {
+        if (sourceNode && targetNode) {
+            const isAdjacent = areAdjacent(sourceNode, targetNode);
+            alert(`The vertices ${sourceNode} and ${targetNode} are ${isAdjacent ? '' : 'not '}adjacent.`);
+        } else {
+            alert("Please enter both vertices to check adjacency.");
+        }
+    };
 
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
@@ -310,11 +323,36 @@ const GraphView = ({ graphType, weight }) => {
                         <button className={styles['pdf-button']} onClick={downloadGraphAsPDF}>Download PDF</button>
                     </div>
                 );
+            case 'adjacencyCheck':
+                return (
+                    <div className={styles['adjacency-check']}>
+                        <h3>Check Adjacency</h3>
+                        <input
+                            type="text"
+                            value={sourceNode}
+                            onChange={(e) => setSourceNode(e.target.value)}
+                            placeholder="Enter Source Vertex ID"
+                            className={styles['input']}
+                        />
+                        <input
+                            type="text"
+                            value={targetNode}
+                            onChange={(e) => setTargetNode(e.target.value)}
+                            placeholder="Enter Target Vertex ID"
+                            className={styles['input']}
+                        />
+                        <button className={styles['check-button']} onClick={checkAdjacency}>
+                            Check if Adjacent
+                        </button>
+                    </div>
+                );
+                
             default:
                 return (
                     <div className={styles['info-options']}>
                         <button onClick={() => setMenuOption('orderSize')}>See order and size</button>
                         <button onClick={() => setMenuOption('vertexDegree')}>See vertex degree</button>
+                        <button onClick={() => setMenuOption('adjacencyCheck')}>Check Adjacency</button>
                         <button onClick={() => setMenuOption('downloadPDF')}>Download Graph as PDF</button>
                         <button onClick={() => setMenuOption('adjacencyMatrix')}>See Adjacency Matrix</button>
                         <button onClick={() => setMenuOption('adjacencyList')}>See Adjacency List</button>

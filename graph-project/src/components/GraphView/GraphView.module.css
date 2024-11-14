@@ -347,3 +347,29 @@
 .list-display th {
     padding: 5px 10px;
 }
+
+.adjacency-check {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.check-button {
+    background-color: blueviolet;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+.check-button:hover {
+    background-color: aqua;
+    color: black;
+}
