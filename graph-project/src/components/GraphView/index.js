@@ -93,12 +93,38 @@ const GraphView = ({ graphType, weight }) => {
 
     const checkAdjacency = () => {
         if (adjSourceNode && adjTargetNode) {
-            const isAdjacent = areAdjacent(adjSourceNode, adjTargetNode);
-            alert(`The vertices ${adjSourceNode} and ${adjTargetNode} are ${isAdjacent ? '' : 'not '}adjacent.`);
+            if (graphType === '2') {
+                const outgoingVertices = adjacencyList[adjSourceNode] || [];
+                const incomingVertices = Object.keys(adjacencyList).filter(
+                    node => adjacencyList[node]?.includes(adjTargetNode)
+                );
+
+                const isOutgoing = outgoingVertices.includes(adjTargetNode);
+                const isIncoming = incomingVertices.includes(adjSourceNode);
+
+                if (isOutgoing) {
+                    alert(
+                        `The vertex ${adjSourceNode} has an outgoing edge to ${adjTargetNode} (directed graph).`
+                    );
+                } else if (isIncoming) {
+                    alert(
+                        `The vertex ${adjTargetNode} has an incoming edge from ${adjSourceNode} (directed graph).`
+                    );
+                } else {
+                    alert(`The vertices ${adjSourceNode} and ${adjTargetNode} are not adjacent in this directed graph.`);
+                }
+            } else {
+                const isAdjacent = areAdjacent(adjSourceNode, adjTargetNode);
+                alert(
+                    `The vertices ${adjSourceNode} and ${adjTargetNode} are ${isAdjacent ? '' : 'not '
+                    }adjacent.`
+                );
+            }
         } else {
             alert("Please enter both vertices to check adjacency.");
         }
     };
+
 
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
