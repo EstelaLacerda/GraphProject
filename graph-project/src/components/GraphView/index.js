@@ -3,6 +3,7 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import styles from './GraphView.module.css';
 import jsPDF from 'jspdf';
 import { useRef } from 'react';
+import dijkstra from 'dijkstrajs';
 
 const GraphView = ({ graphType, weight }) => {
     const [width] = useState("100%");
@@ -32,6 +33,9 @@ const GraphView = ({ graphType, weight }) => {
 
     const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
     const [adjacencyList, setAdjacencyList] = useState({});
+
+    const [shortestPath, setShortestPath] = useState(null);
+    const [shortestPathCost, setShortestPathCost] = useState(null);
 
     const toggleMenu = () => setIsMenuVisible(!isMenuVisible);
 
@@ -252,6 +256,39 @@ const GraphView = ({ graphType, weight }) => {
         }
     };
 
+    const calculateShortestPath = () => {
+        if (adjSourceNode && adjTargetNode) {
+            const graph = {};
+            graphData.nodes.forEach(node => {
+                graph[node.data.id] = {};
+            });
+
+            graphData.edges.forEach(edge => {
+                const { source, target, weight } = edge.data;
+                graph[source][target] = parseFloat(weight) || 1;
+                if (graphType === '1') {
+                    graph[target][source] = parseFloat(weight) || 1;
+                }
+            });
+
+            try {
+                const path = dijkstra.find_path(graph, adjSourceNode, adjTargetNode);
+                const cost = path.reduce((total, currentNode, index) => {
+                    if (index === 0) return total;
+                    const previousNode = path[index - 1];
+                    return total + graph[previousNode][currentNode];
+                }, 0);
+
+                setShortestPath(path);
+                setShortestPathCost(cost);
+            } catch (error) {
+                alert('No path found between the given nodes.');
+            }
+        } else {
+            alert("Please enter both source and target vertices to calculate the shortest path.");
+        }
+    };
+
     const elements = [
         ...graphData.nodes.map(node => ({ data: node.data })),
         ...graphData.edges.map(edge => ({ data: edge.data }))
@@ -410,6 +447,36 @@ const GraphView = ({ graphType, weight }) => {
                         </button>
                     </div>
                 );
+            
+            case 'shortestPathAlgorithm':
+                return (
+                    <div className={styles['shortest-path-section']}>
+                        <h3>Shortest Path Algorithm</h3>
+                        <input
+                            type="text"
+                            value={adjSourceNode}
+                            onChange={(e) => setAdjSourceNode(e.target.value)}
+                            placeholder="Enter Source Vertex ID"
+                            className={styles['input']}
+                        />
+                        <input
+                            type="text"
+                            value={adjTargetNode}
+                            onChange={(e) => setAdjTargetNode(e.target.value)}
+                            placeholder="Enter Target Vertex ID"
+                            className={styles['input']}
+                        />
+                        <button className={styles['calculate-button']} onClick={calculateShortestPath}>
+                            Calculate Shortest Path
+                        </button>
+                        {shortestPath && (
+                            <div className={styles['shortest-path-result']}>
+                                <p>Shortest Path: {shortestPath.join(' -> ')}</p>
+                                <p>Path Cost: {shortestPathCost}</p>
+                            </div>
+                        )}
+                    </div>
+                );
 
             default:
                 return (
@@ -420,6 +487,7 @@ const GraphView = ({ graphType, weight }) => {
                         <button onClick={() => setMenuOption('downloadPDF')}>Download Graph as PDF</button>
                         <button onClick={() => setMenuOption('adjacencyMatrix')}>See Adjacency Matrix</button>
                         <button onClick={() => setMenuOption('adjacencyList')}>See Adjacency List</button>
+                        <button onClick={() => setMenuOption('shortestPathAlgorithm')}>Shortest Path Algorithm</button>
                     </div>
                 );
         }
