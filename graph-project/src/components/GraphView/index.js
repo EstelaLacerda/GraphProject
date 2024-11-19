@@ -62,13 +62,13 @@ const GraphView = ({ graphType, weight }) => {
             const target = edge.data.target;
 
             if (!list[source]) list[source] = [];
-            if (graphType === '2' && !list[target]) list[target] = [];
+            if (!list[target]) list[target] = [];
 
             if (graphType === '1') {
-                list[source].push(target);
-                list[target].push(source);
+                if (!list[source].includes(target)) list[source].push(target);
+                if (!list[target].includes(source)) list[target].push(source);
             } else if (graphType === '2') {
-                list[source].push(target);
+                if (!list[source].includes(target)) list[source].push(target);
             }
 
             const sourceIndex = nodeIds.indexOf(source);
@@ -85,6 +85,7 @@ const GraphView = ({ graphType, weight }) => {
         setAdjacencyMatrix(matrix);
         setAdjacencyList(list);
     };
+
 
     const areAdjacent = (vertex1, vertex2) => {
         const adjacentVertices = adjacencyList[vertex1];
