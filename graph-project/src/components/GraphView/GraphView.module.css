@@ -304,8 +304,9 @@
 
 .matrix-display {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
 }
 
 .matrix-display table {

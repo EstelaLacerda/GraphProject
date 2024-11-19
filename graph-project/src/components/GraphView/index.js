@@ -21,7 +21,6 @@ const GraphView = ({ graphType, weight }) => {
     const [vertexId, setVertexId] = useState('');
     const [vertexDegree, setVertexDegree] = useState(null);
 
-     // Novos estados para verificar adjacência
     const [adjSourceNode, setAdjSourceNode] = useState('');
     const [adjTargetNode, setAdjTargetNode] = useState('');
 
@@ -63,17 +62,23 @@ const GraphView = ({ graphType, weight }) => {
             const target = edge.data.target;
 
             if (!list[source]) list[source] = [];
-            if (!list[target]) list[target] = [];
+            if (graphType === '2' && !list[target]) list[target] = [];
 
-            list[source].push(target);
-            list[target].push(source);
+            if (graphType === '1') {
+                list[source].push(target);
+                list[target].push(source);
+            } else if (graphType === '2') {
+                list[source].push(target);
+            }
 
             const sourceIndex = nodeIds.indexOf(source);
             const targetIndex = nodeIds.indexOf(target);
 
             if (sourceIndex !== -1 && targetIndex !== -1) {
                 matrix[sourceIndex][targetIndex] = edge.data.weight || 1;
-                matrix[targetIndex][sourceIndex] = edge.data.weight || 1;
+                if (graphType === '1') {
+                    matrix[targetIndex][sourceIndex] = edge.data.weight || 1;
+                }
             }
         });
 
@@ -273,9 +278,37 @@ const GraphView = ({ graphType, weight }) => {
                                 ))}
                             </tbody>
                         </table>
+                        {graphType === '2' && (
+                            <div>
+                                <h4>Directed Graph Adjacency Details</h4>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Node</th>
+                                            <th>Outgoing Vertices</th>
+                                            <th>Incoming Vertices</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Object.keys(adjacencyList).map(nodeId => {
+                                            const outgoingVertices = adjacencyList[nodeId] || [];
+                                            const incomingVertices = Object.keys(adjacencyList).filter(
+                                                otherNode => adjacencyList[otherNode]?.includes(nodeId)
+                                            );
+                                            return (
+                                                <tr key={nodeId}>
+                                                    <td>{nodeId}</td>
+                                                    <td>{outgoingVertices.join(', ') || 'None'}</td>
+                                                    <td>{incomingVertices.join(', ') || 'None'}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 );
-
             case 'adjacencyList':
                 return (
                     <div className={styles['list-display']}>
@@ -350,7 +383,7 @@ const GraphView = ({ graphType, weight }) => {
                         </button>
                     </div>
                 );
-                
+
             default:
                 return (
                     <div className={styles['info-options']}>
