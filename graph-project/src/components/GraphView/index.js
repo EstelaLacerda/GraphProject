@@ -4,6 +4,7 @@ import styles from './GraphView.module.css';
 import jsPDF from 'jspdf';
 import { useRef } from 'react';
 import dijkstra from 'dijkstrajs';
+import HelpButton from '../HelpButton';
 
 const GraphView = ({ graphType, weight }) => {
     const [width] = useState("100%");
@@ -447,7 +448,7 @@ const GraphView = ({ graphType, weight }) => {
                         </button>
                     </div>
                 );
-            
+
             case 'shortestPathAlgorithm':
                 return (
                     <div className={styles['shortest-path-section']}>
@@ -614,6 +615,7 @@ const GraphView = ({ graphType, weight }) => {
                     ]}
                 />
             </div>
+            <HelpButton />
         </div>
     );
 };
