@@ -21,7 +21,12 @@ const GraphView = ({ graphType, weight }) => {
     const [targetNode, setTargetNode] = useState('');
     const [edgeWeight, setEdgeWeight] = useState('');
     const [vertexId, setVertexId] = useState('');
-    const [vertexDegree, setVertexDegree] = useState(null);
+    const [vertexDegree, setVertexDegree] = useState({
+        inDegree: null,
+        outDegree: null,
+        totalDegree: null,
+        message: null
+    });
 
     const [adjSourceNode, setAdjSourceNode] = useState('');
     const [adjTargetNode, setAdjTargetNode] = useState('');
@@ -47,14 +52,50 @@ const GraphView = ({ graphType, weight }) => {
     }, [graphData]);
 
     const calculateVertexDegree = () => {
-        const degree = graphData.edges.reduce((count, edge) => {
-            if (edge.data.source === vertexId || edge.data.target === vertexId) {
-                return count + 1;
-            }
-            return count;
-        }, 0);
+        if (!vertexId.trim()) {
+            setVertexDegree({
+                inDegree: null,
+                outDegree: null,
+                totalDegree: null,
+                message: "Please enter a valid vertex ID."
+            });
+            return;
+        }
 
-        setVertexDegree(degree);
+        if (graphType === '2') {
+            let inDegree = 0;
+            let outDegree = 0;
+
+            graphData.edges.forEach((edge) => {
+                if (edge.data.source === vertexId) {
+                    outDegree++;
+                }
+                if (edge.data.target === vertexId) {
+                    inDegree++;
+                }
+            });
+
+            setVertexDegree({
+                inDegree,
+                outDegree,
+                totalDegree: null,
+                message: null
+            });
+        } else {
+            const totalDegree = graphData.edges.reduce((count, edge) => {
+                if (edge.data.source === vertexId || edge.data.target === vertexId) {
+                    return count + 1;
+                }
+                return count;
+            }, 0);
+
+            setVertexDegree({
+                inDegree: null,
+                outDegree: null,
+                totalDegree,
+                message: null
+            });
+        }
     };
 
     const generateAdjacencyMatrix = () => {
@@ -316,8 +357,24 @@ const GraphView = ({ graphType, weight }) => {
                                 placeholder="Enter Vertex ID for Degree"
                             />
                         </div>
-                        <button className={styles['degree-button']} onClick={calculateVertexDegree}>Calculate Degree</button>
-                        {vertexDegree !== null && <p>Degree of Vertex {vertexId}: {vertexDegree}</p>}
+                        <button className={styles['degree-button']} onClick={calculateVertexDegree}>
+                            Calculate Degree
+                        </button>
+                        {vertexDegree.message && <p className={styles['error-message']}>{vertexDegree.message}</p>}
+
+                        {graphType === '2' && vertexDegree.inDegree !== null && (
+                            <div className={styles['degree-info']}>
+                                <p>Vertex {vertexId}:</p>
+                                <p>Outgoing edges: {vertexDegree.outDegree}</p>
+                                <p>Incoming edges: {vertexDegree.inDegree}</p>
+                            </div>
+                        )}
+
+                        {graphType !== '2' && vertexDegree.totalDegree !== null && (
+                            <p className={styles['degree-info']}>
+                                Vertex {vertexId} has a total degree of: {vertexDegree.totalDegree}
+                            </p>
+                        )}
                     </div>
                 );
             case 'adjacencyMatrix':
@@ -384,8 +441,8 @@ const GraphView = ({ graphType, weight }) => {
                                     <th>Node</th>
                                     {graphType === '2' ? (
                                         <>
-                                            <th>Outgoing Vertices</th>
-                                            <th>Incoming Vertices</th>
+                                            <th>Outgoing Nodes</th>
+                                            <th>Incoming Nodes</th>
                                         </>
                                     ) : (
                                         <th>Adjacents</th>
