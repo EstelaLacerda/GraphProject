@@ -155,6 +155,18 @@
     gap: 8px;
 }
 
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.degree-info {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 .input-degree {
     background-color: rgba(255, 255, 255, 0.2);
     padding: 5px;
@@ -359,6 +371,29 @@
     border-radius: 8px;
 }
 
+.adj-input {
+    background-color: #444;
+    padding: 5px;
+    display: flex;
+    border-radius: 8px;
+    outline: none;
+}
+
+.adj-input input {
+    background-color: transparent;
+    border: 0;
+    font-size: 14px;
+    color: #fff;
+    outline: none;
+    margin-right: 8px;
+}
+
+.adjacency-result {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 .check-button {
     background-color: blueviolet;
     color: white;
@@ -371,6 +406,49 @@
 }
 
 .check-button:hover {
+    background-color: aqua;
+    color: black;
+}
+
+.shortest-path-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.path-input {
+    background-color: #444;
+    padding: 5px;
+    display: flex;
+    border-radius: 8px;
+    outline: none;
+}
+
+.path-input input {
+    background-color: transparent;
+    border: 0;
+    font-size: 14px;
+    color: #fff;
+    outline: none;
+    margin-right: 8px;
+}
+
+.calculate-button {
+    background-color: blueviolet;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+.calculate-button:hover {
     background-color: aqua;
     color: black;
 }

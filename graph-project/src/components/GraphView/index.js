@@ -30,6 +30,7 @@ const GraphView = ({ graphType, weight }) => {
 
     const [adjSourceNode, setAdjSourceNode] = useState('');
     const [adjTargetNode, setAdjTargetNode] = useState('');
+    const [adjacencyMessage, setAdjacencyMessage] = useState('');
 
     const [order, setOrder] = useState(0);
     const [size, setSize] = useState(0);
@@ -65,6 +66,7 @@ const GraphView = ({ graphType, weight }) => {
         if (graphType === '2') {
             let inDegree = 0;
             let outDegree = 0;
+            let totalDegree = 0;
 
             graphData.edges.forEach((edge) => {
                 if (edge.data.source === vertexId) {
@@ -75,10 +77,12 @@ const GraphView = ({ graphType, weight }) => {
                 }
             });
 
+            totalDegree = inDegree + outDegree;
+
             setVertexDegree({
                 inDegree,
                 outDegree,
-                totalDegree: null,
+                totalDegree,
                 message: null
             });
         } else {
@@ -142,36 +146,33 @@ const GraphView = ({ graphType, weight }) => {
         if (adjSourceNode && adjTargetNode) {
             if (graphType === '2') {
                 const outgoingVertices = adjacencyList[adjSourceNode] || [];
-                const incomingVertices = Object.keys(adjacencyList).filter(
-                    node => adjacencyList[node]?.includes(adjTargetNode)
-                );
-
                 const isOutgoing = outgoingVertices.includes(adjTargetNode);
+                const incomingVertices = adjacencyList[adjTargetNode] || [];
                 const isIncoming = incomingVertices.includes(adjSourceNode);
 
                 if (isOutgoing) {
-                    alert(
-                        `The vertex ${adjSourceNode} has an outgoing edge to ${adjTargetNode} (directed graph).`
+                    setAdjacencyMessage(
+                        `The vertex ${adjSourceNode} has an outgoing edge to ${adjTargetNode} (directed graph).\nThey're adjacent`
                     );
                 } else if (isIncoming) {
-                    alert(
-                        `The vertex ${adjTargetNode} has an incoming edge from ${adjSourceNode} (directed graph).`
+                    setAdjacencyMessage(
+                        `The vertex ${adjTargetNode} has an incoming edge from ${adjSourceNode} (directed graph). \nThey're adjacent`
                     );
                 } else {
-                    alert(`The vertices ${adjSourceNode} and ${adjTargetNode} are not adjacent in this directed graph.`);
+                    setAdjacencyMessage(
+                        `The vertices ${adjSourceNode} and ${adjTargetNode} are not adjacent in this directed graph.`
+                    );
                 }
             } else {
                 const isAdjacent = areAdjacent(adjSourceNode, adjTargetNode);
-                alert(
-                    `The vertices ${adjSourceNode} and ${adjTargetNode} are ${isAdjacent ? '' : 'not '
-                    }adjacent.`
+                setAdjacencyMessage(
+                    `The vertices ${adjSourceNode} and ${adjTargetNode} are ${isAdjacent ? '' : 'not '}adjacent.`
                 );
             }
         } else {
-            alert("Please enter both vertices to check adjacency.");
+            setAdjacencyMessage("Please enter both vertices to check adjacency.");
         }
     };
-
 
     const addNode = () => {
         if (nodeLabel.trim() !== '') {
@@ -367,6 +368,7 @@ const GraphView = ({ graphType, weight }) => {
                                 <p>Vertex {vertexId}:</p>
                                 <p>Outgoing edges: {vertexDegree.outDegree}</p>
                                 <p>Incoming edges: {vertexDegree.inDegree}</p>
+                                <p>Total Degree: {vertexDegree.totalDegree}</p>
                             </div>
                         )}
 
@@ -486,44 +488,48 @@ const GraphView = ({ graphType, weight }) => {
                 return (
                     <div className={styles['adjacency-check']}>
                         <h3>Check Adjacency</h3>
-                        <input
-                            type="text"
-                            value={adjSourceNode}
-                            onChange={(e) => setAdjSourceNode(e.target.value)}
-                            placeholder="Enter Source Vertex ID"
-                            className={styles['input']}
-                        />
-                        <input
-                            type="text"
-                            value={adjTargetNode}
-                            onChange={(e) => setAdjTargetNode(e.target.value)}
-                            placeholder="Enter Target Vertex ID"
-                            className={styles['input']}
-                        />
+                        <div className={styles['adj-input']}>
+                            <input
+                                type="text"
+                                value={adjSourceNode}
+                                onChange={(e) => setAdjSourceNode(e.target.value)}
+                                placeholder="Enter Source Vertex ID"
+                            />
+                        </div>
+                        <div className={styles['adj-input']}>
+                            <input
+                                type="text"
+                                value={adjTargetNode}
+                                onChange={(e) => setAdjTargetNode(e.target.value)}
+                                placeholder="Enter Target Vertex ID"
+                            />
+                        </div>
                         <button className={styles['check-button']} onClick={checkAdjacency}>
                             Check if Adjacent
                         </button>
+                        {adjacencyMessage && <p className={styles['adjacency-result']}>{adjacencyMessage}</p>}
                     </div>
                 );
-
             case 'shortestPathAlgorithm':
                 return (
                     <div className={styles['shortest-path-section']}>
                         <h3>Shortest Path Algorithm</h3>
-                        <input
-                            type="text"
-                            value={adjSourceNode}
-                            onChange={(e) => setAdjSourceNode(e.target.value)}
-                            placeholder="Enter Source Vertex ID"
-                            className={styles['input']}
-                        />
-                        <input
-                            type="text"
-                            value={adjTargetNode}
-                            onChange={(e) => setAdjTargetNode(e.target.value)}
-                            placeholder="Enter Target Vertex ID"
-                            className={styles['input']}
-                        />
+                        <div className={styles['path-input']}>
+                            <input
+                                type="text"
+                                value={adjSourceNode}
+                                onChange={(e) => setAdjSourceNode(e.target.value)}
+                                placeholder="Enter Source Vertex ID"
+                            />
+                        </div>
+                        <div className={styles['path-input']}>
+                            <input
+                                type="text"
+                                value={adjTargetNode}
+                                onChange={(e) => setAdjTargetNode(e.target.value)}
+                                placeholder="Enter Target Vertex ID"
+                            />
+                        </div>
                         <button className={styles['calculate-button']} onClick={calculateShortestPath}>
                             Calculate Shortest Path
                         </button>
