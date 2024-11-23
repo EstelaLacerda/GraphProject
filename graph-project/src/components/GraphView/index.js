@@ -337,6 +337,53 @@ const GraphView = ({ graphType, weight }) => {
         ...graphData.edges.map(edge => ({ data: edge.data }))
     ];
 
+    const isEulerian = () => {
+        // Para grafos não direcionados
+        if (graphType === '1') {
+            // Verifica se todos os vértices têm grau par
+            const hasAllEvenDegrees = graphData.nodes.every(node => {
+                const totalDegree = graphData.edges.reduce((count, edge) => {
+                    if (edge.data.source === node.data.id || edge.data.target === node.data.id) {
+                        return count + 1;
+                    }
+                    return count;
+                }, 0);
+                return totalDegree % 2 === 0;
+            });
+    
+            if (hasAllEvenDegrees) {
+                alert('O grafo é Euleriano');
+            } else {
+                alert('O grafo não é Euleriano');
+            }
+        }
+        // Para grafos direcionados
+        else if (graphType === '2') {
+            const inDegrees = {};
+            const outDegrees = {};
+    
+            graphData.nodes.forEach(node => {
+                inDegrees[node.data.id] = 0;
+                outDegrees[node.data.id] = 0;
+            });
+    
+            graphData.edges.forEach(edge => {
+                outDegrees[edge.data.source]++;
+                inDegrees[edge.data.target]++;
+            });
+    
+            const isEulerian = graphData.nodes.every(node => {
+                return inDegrees[node.data.id] === outDegrees[node.data.id];
+            });
+    
+            if (isEulerian) {
+                alert('O grafo é Euleriano');
+            } else {
+                alert('O grafo não é Euleriano');
+            }
+        }
+    };
+
     const renderMenuContent = () => {
         switch (menuOption) {
             case 'orderSize':
@@ -542,6 +589,14 @@ const GraphView = ({ graphType, weight }) => {
                     </div>
                 );
 
+            case 'eulerianCheck':
+                return (
+                    <div className={styles['eulerian-check']}>
+                        <button className={styles['eulerian-button']} onClick={isEulerian}>
+                            Check if Eulerian
+                        </button>
+                    </div>
+                );
             default:
                 return (
                     <div className={styles['info-options']}>
@@ -552,6 +607,7 @@ const GraphView = ({ graphType, weight }) => {
                         <button onClick={() => setMenuOption('adjacencyMatrix')}>See Adjacency Matrix</button>
                         <button onClick={() => setMenuOption('adjacencyList')}>See Adjacency List</button>
                         <button onClick={() => setMenuOption('shortestPathAlgorithm')}>Shortest Path Algorithm</button>
+                        <button onClick={() => setMenuOption('eulerianCheck')}>Check if Eulerian</button>
                     </div>
                 );
         }
