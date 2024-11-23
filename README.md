@@ -13,9 +13,10 @@ The project includes the following features:
   <tr>- Insertion of Unweighted Graphs</tr><br>
   <tr>- Visualization of the graph's order and size</tr><br>
   <tr>- Visualization of the degree of a vertex</tr><br>
-  <tr>- Check if two vertices are adjacent</tr><br>
   <tr>- Visualization of the adjacency matrix</tr><br>
   <tr>- Visualization of the adjacency list</tr><br>
+  <tr>- Check if two vertices are adjacent</tr><br>
+  <tr>- Check if the graph is eulerian</tr><br>
   <tr>- Calculation of the shortest path between two vertices</tr><br>
 </table>
 
@@ -114,9 +115,10 @@ O projeto conta com as seguintes features:
   <tr>- Inserção de Grafos sem peso</tr><br>
   <tr>- Visualização da ordem e tamanho do Grafo</tr><br>
   <tr>- Visualização do grau de um vértice</tr><br>
-  <tr>- Verificação de se dois vértices são adjacentes</tr><br>
   <tr>- Visualização da matriz de adjacências</tr><br>
   <tr>- Visualização da lista de adjacências</tr><br>
+  <tr>- Verificação de se dois vértices são adjacentes</tr><br>
+  <tr>- Verificação de se um grafo é euleriano</tr><br>
   <tr>- Cálculo do menor caminho entre dois vértices</tr><br>
 </table>
 
