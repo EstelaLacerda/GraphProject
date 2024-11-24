@@ -651,3 +651,31 @@
     width: 80%;
     border: 5px solid #ccc;
 }
+
+.remove-edge {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.remove-edge .input-container input {
+    padding: 10px;
+    width: 80%;
+    border-radius: 5px;
+}
+
+.remove-edge .remove-button {
+    padding: 10px 20px;
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-edge .remove-button:hover {
+    background-color: #e5533d;
+}

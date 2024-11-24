@@ -21,6 +21,8 @@ const GraphView = ({ graphType, weight }) => {
     const [nodeIdToRemove, setNodeIdToRemove] = useState('');
     const [targetNode, setTargetNode] = useState('');
     const [edgeWeight, setEdgeWeight] = useState('');
+    const [edgeSource, setEdgeSource] = useState('');
+    const [edgeTarget, setEdgeTarget] = useState('');
     const [vertexId, setVertexId] = useState('');
     const [vertexDegree, setVertexDegree] = useState({
         inDegree: null,
@@ -232,6 +234,51 @@ const GraphView = ({ graphType, weight }) => {
         } else {
             alert("Failed! Verify if source and target nodes really exist.");
         }
+    };
+
+    const removeEdge = () => {
+        if (!edgeSource.trim() || !edgeTarget.trim()) {
+            alert("Please enter valid source and target node IDs.");
+            return;
+        }
+
+        const edgeExists = graphData.edges.some(edge => {
+            if (graphType === '1') {
+                // Para grafos não direcionados, verifica ambas as direções
+                return (
+                    (edge.data.source === edgeSource && edge.data.target === edgeTarget) ||
+                    (edge.data.source === edgeTarget && edge.data.target === edgeSource)
+                );
+            } else {
+                return edge.data.source === edgeSource && edge.data.target === edgeTarget;
+            }
+        });
+
+        if (!edgeExists) {
+            alert(`The edge between ${edgeSource} and ${edgeTarget} does not exist.`);
+            return;
+        }
+
+        setGraphData(prev => {
+            const updatedEdges = prev.edges.filter(edge => {
+                if (graphType === '1') {
+                    return !(
+                        (edge.data.source === edgeSource && edge.data.target === edgeTarget) ||
+                        (edge.data.source === edgeTarget && edge.data.target === edgeSource)
+                    );
+                } else {
+                    return !(edge.data.source === edgeSource && edge.data.target === edgeTarget);
+                }
+            });
+
+            return {
+                nodes: prev.nodes,
+                edges: updatedEdges
+            };
+        });
+
+        setEdgeSource('');
+        setEdgeTarget('');
     };
 
     const removeNode = () => {
@@ -628,11 +675,37 @@ const GraphView = ({ graphType, weight }) => {
                         <button onClick={showHelp} className={styles['csv-help']}>About the file</button>
                     </div>
                 );
+            case 'removeEdge':
+                return (
+                    <div className={styles['remove-edge']}>
+                        <h3>Remove Edge</h3>
+                        <div className={styles['input-container']}>
+                            <input
+                                type="text"
+                                value={edgeSource}
+                                onChange={(e) => setEdgeSource(e.target.value)}
+                                placeholder="Enter Source Node ID"
+                            />
+                        </div>
+                        <div className={styles['input-container']}>
+                            <input
+                                type="text"
+                                value={edgeTarget}
+                                onChange={(e) => setEdgeTarget(e.target.value)}
+                                placeholder="Enter Target Node ID"
+                            />
+                        </div>
+                        <button className={styles['remove-button']} onClick={removeEdge}>
+                            Remove Edge
+                        </button>
+                    </div>
+                );
             default:
                 return (
                     <div className={styles['info-options']}>
                         <button onClick={() => setMenuOption('orderSize')}>See order and size</button>
                         <button onClick={() => setMenuOption('vertexDegree')}>See vertex degree</button>
+                        <button onClick={() => setMenuOption('removeEdge')}>Remove Edge</button>
                         <button onClick={() => setMenuOption('adjacencyCheck')}>Check Adjacency</button>
                         <button onClick={() => setMenuOption('downloadPDF')}>Download Graph as PDF</button>
                         <button onClick={() => setMenuOption('adjacencyMatrix')}>See Adjacency Matrix</button>
@@ -721,11 +794,11 @@ const GraphView = ({ graphType, weight }) => {
                         <div className={styles['guide-container']}>
                             <div className={styles['guide-content']}>
                                 <h4>Non-weighted</h4>
-                                <img src='/images/non-weight.png' alt='non-weighted csv example'/>
+                                <img src='/images/non-weight.png' alt='non-weighted csv example' />
                             </div>
                             <div className={styles['guide-content']}>
                                 <h4>Weighted</h4>
-                                <img src='/images/weight.png' alt='non-weighted csv example'/>
+                                <img src='/images/weight.png' alt='non-weighted csv example' />
                             </div>
                         </div>
                     </div>
