@@ -5,6 +5,7 @@ import jsPDF from 'jspdf';
 import { useRef } from 'react';
 import dijkstra from 'dijkstrajs';
 import HelpButton from '../HelpButton';
+import Papa from 'papaparse';
 
 const GraphView = ({ graphType, weight }) => {
     const [width] = useState("100%");
@@ -338,9 +339,7 @@ const GraphView = ({ graphType, weight }) => {
     ];
 
     const isEulerian = () => {
-        // Para grafos não direcionados
         if (graphType === '1') {
-            // Verifica se todos os vértices têm grau par
             const hasAllEvenDegrees = graphData.nodes.every(node => {
                 const totalDegree = graphData.edges.reduce((count, edge) => {
                     if (edge.data.source === node.data.id || edge.data.target === node.data.id) {
@@ -350,38 +349,90 @@ const GraphView = ({ graphType, weight }) => {
                 }, 0);
                 return totalDegree % 2 === 0;
             });
-    
+
             if (hasAllEvenDegrees) {
                 alert('O grafo é Euleriano');
             } else {
                 alert('O grafo não é Euleriano');
             }
         }
-        // Para grafos direcionados
         else if (graphType === '2') {
             const inDegrees = {};
             const outDegrees = {};
-    
+
             graphData.nodes.forEach(node => {
                 inDegrees[node.data.id] = 0;
                 outDegrees[node.data.id] = 0;
             });
-    
+
             graphData.edges.forEach(edge => {
                 outDegrees[edge.data.source]++;
                 inDegrees[edge.data.target]++;
             });
-    
+
             const isEulerian = graphData.nodes.every(node => {
                 return inDegrees[node.data.id] === outDegrees[node.data.id];
             });
-    
+
             if (isEulerian) {
                 alert('O grafo é Euleriano');
             } else {
                 alert('O grafo não é Euleriano');
             }
         }
+    };
+
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+                const nodes = [];
+                const edges = [];
+
+                results.data.forEach(row => {
+                    if (row['NODE ID'] && row['Label']) {
+                        const nodeId = row['NODE ID'].toString().trim();
+                        if (!nodes.some(node => node.data.id === nodeId)) {
+                            nodes.push({
+                                data: { id: nodeId, label: row['Label'].trim() },
+                                position: { x: Math.random() * 400, y: Math.random() * 400 }
+                            });
+                        }
+                    }
+
+                    if (row['Source'] && row['Target']) {
+                        const sourceId = row['Source'].toString().trim();
+                        const targetId = row['Target'].toString().trim();
+
+                        const edgeWeight = (weight === '1' && row['Weight']) ? parseFloat(row['Weight']) : null;
+
+                        if (sourceId && targetId) {
+                            edges.push({
+                                data: {
+                                    source: sourceId,
+                                    target: targetId,
+                                    weight: edgeWeight
+                                }
+                            });
+                        }
+                    }
+                });
+
+                if (nodes.length > 0) {
+                    setGraphData({ nodes, edges });
+                    setMenuOption(''); 
+                } else {
+                    alert("Erro: Nenhum nó ou aresta válido encontrado no CSV.");
+                }
+            },
+            error: (error) => {
+                alert("Erro ao processar o arquivo: " + error.message);
+            }
+        });
     };
 
     const renderMenuContent = () => {
@@ -597,6 +648,20 @@ const GraphView = ({ graphType, weight }) => {
                         </button>
                     </div>
                 );
+            case 'uploadCSV':
+                return (
+                    <div className={styles['csv-upload']}>
+                        <h3>Upload CSV File</h3>
+                        <input
+                            type="file"
+                            accept=".csv"
+                            onChange={handleFileUpload}
+                            id='fileUpload'
+                            placeholder='Coose a CSV file'
+                        />
+                        <label htmlFor="fileUpload">Choose a CSV file</label>
+                    </div>
+                );
             default:
                 return (
                     <div className={styles['info-options']}>
@@ -608,6 +673,7 @@ const GraphView = ({ graphType, weight }) => {
                         <button onClick={() => setMenuOption('adjacencyList')}>See Adjacency List</button>
                         <button onClick={() => setMenuOption('shortestPathAlgorithm')}>Shortest Path Algorithm</button>
                         <button onClick={() => setMenuOption('eulerianCheck')}>Check if Eulerian</button>
+                        <button onClick={() => setMenuOption('uploadCSV')}>Upload CSV</button>
                     </div>
                 );
         }

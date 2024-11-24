@@ -472,3 +472,52 @@
     transform: translateY(-5px);
     box-shadow: 0px 10px 12px 0px rgba(245, 244, 244, 0.3);
 }
+
+.csv-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    padding: 20px;
+    border: 2px dashed #69b3a2;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.csv-upload:hover {
+    background-color: #e3f7ef;
+}
+
+.csv-upload input {
+    display: none;
+}
+
+.csv-upload label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    padding: 10px 20px;
+    background-color: #69b3a2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.csv-upload label:hover {
+    background-color: #57a48e;
+    transform: scale(1.05);
+}
+
+.csv-upload label:active {
+    transform: scale(0.95);
+}
+
+.csv-upload h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
