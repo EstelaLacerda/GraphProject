@@ -11,6 +11,7 @@ The project includes the following features:
   <tr>- Insertion of Directed Graphs</tr><br>
   <tr>- Insertion of Weighted Graphs</tr><br>
   <tr>- Insertion of Unweighted Graphs</tr><br>
+  <tr>- Insertion of Graph by CSV file</tr><br>
   <tr>- Visualization of the graph's order and size</tr><br>
   <tr>- Visualization of the degree of a vertex</tr><br>
   <tr>- Visualization of the adjacency matrix</tr><br>
@@ -113,6 +114,7 @@ O projeto conta com as seguintes features:
   <tr>- Inserção de Grafos direcionados</tr><br>
   <tr>- Inserção de Grafos com peso</tr><br>
   <tr>- Inserção de Grafos sem peso</tr><br>
+  <tr>- Inserção de Grafo por arquivo CSV</tr><br>
   <tr>- Visualização da ordem e tamanho do Grafo</tr><br>
   <tr>- Visualização do grau de um vértice</tr><br>
   <tr>- Visualização da matriz de adjacências</tr><br>
