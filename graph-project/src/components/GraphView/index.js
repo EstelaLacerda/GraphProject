@@ -51,6 +51,12 @@ const GraphView = ({ graphType, weight }) => {
         setIsModalOpen(!isModalOpen);
     };
 
+    const [isHelpOpen, setIsHeplOpen] = useState(false);
+
+    const showHelp = () => {
+        setIsHeplOpen(!isHelpOpen);
+    };
+
     const toggleMenu = () => setIsMenuVisible(!isMenuVisible);
 
     useEffect(() => {
@@ -619,6 +625,7 @@ const GraphView = ({ graphType, weight }) => {
                             placeholder='Coose a CSV file'
                         />
                         <label htmlFor="fileUpload">Choose a CSV file</label>
+                        <button onClick={showHelp} className={styles['csv-help']}>About the file</button>
                     </div>
                 );
             default:
@@ -697,6 +704,29 @@ const GraphView = ({ graphType, weight }) => {
                                     </table>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isHelpOpen && (
+                <div className={styles['help-modal']}>
+                    <div className={styles['help-content']}>
+                        <button className={styles['close-button']} onClick={showHelp}>
+                            ✖
+                        </button>
+                        <h3>About the file</h3>
+                        <p>
+                            To upload a file to the system, it must be a .csv formatted as shown in the following images.
+                        </p>
+                        <div className={styles['guide-container']}>
+                            <div className={styles['guide-content']}>
+                                <h4>Non-weighted</h4>
+                                <img src='/images/non-weight.png' alt='non-weighted csv example'/>
+                            </div>
+                            <div className={styles['guide-content']}>
+                                <h4>Weighted</h4>
+                                <img src='/images/weight.png' alt='non-weighted csv example'/>
+                            </div>
                         </div>
                     </div>
                 </div>

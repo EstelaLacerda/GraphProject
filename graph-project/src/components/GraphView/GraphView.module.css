@@ -590,3 +590,64 @@
     margin-bottom: 10px;
     color: #333;
 }
+
+.csv-help {
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    padding: 10px 20px;
+    background-color: #69b3a2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.csv-help:hover {
+    background-color: #57a48e;
+    transform: scale(1.05);
+}
+
+.help-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.help-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 50%;
+    max-height: 90%;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.guide-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.guide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.guide-content img {
+    width: 80%;
+    border: 5px solid #ccc;
+}
