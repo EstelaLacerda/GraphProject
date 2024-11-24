@@ -45,6 +45,12 @@ const GraphView = ({ graphType, weight }) => {
     const [shortestPath, setShortestPath] = useState(null);
     const [shortestPathCost, setShortestPathCost] = useState(null);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
     const toggleMenu = () => setIsMenuVisible(!isMenuVisible);
 
     useEffect(() => {
@@ -424,7 +430,7 @@ const GraphView = ({ graphType, weight }) => {
 
                 if (nodes.length > 0) {
                     setGraphData({ nodes, edges });
-                    setMenuOption(''); 
+                    setMenuOption('');
                 } else {
                     alert("Erro: Nenhum nó ou aresta válido encontrado no CSV.");
                 }
@@ -479,56 +485,10 @@ const GraphView = ({ graphType, weight }) => {
                 );
             case 'adjacencyMatrix':
                 return (
-                    <div className={styles['matrix-display']}>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    {graphData.nodes.map(node => (
-                                        <th key={node.data.id}>{node.data.id}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {adjacencyMatrix.map((row, i) => (
-                                    <tr key={i}>
-                                        <td>{graphData.nodes[i].data.id}</td>
-                                        {row.map((cell, j) => (
-                                            <td key={j}>{cell}</td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {graphType === '2' && (
-                            <div>
-                                <h4>Directed Graph Adjacency Details</h4>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Node</th>
-                                            <th>Outgoing Vertices</th>
-                                            <th>Incoming Vertices</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {Object.keys(adjacencyList).map(nodeId => {
-                                            const outgoingVertices = adjacencyList[nodeId] || [];
-                                            const incomingVertices = Object.keys(adjacencyList).filter(
-                                                otherNode => adjacencyList[otherNode]?.includes(nodeId)
-                                            );
-                                            return (
-                                                <tr key={nodeId}>
-                                                    <td>{nodeId}</td>
-                                                    <td>{outgoingVertices.join(', ') || 'None'}</td>
-                                                    <td>{incomingVertices.join(', ') || 'None'}</td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                    <div>
+                        <button onClick={toggleModal} className={styles['open-modal-button']}>
+                            Open Adjacency Matrix
+                        </button>
                     </div>
                 );
             case 'adjacencyList':
@@ -639,7 +599,6 @@ const GraphView = ({ graphType, weight }) => {
                         )}
                     </div>
                 );
-
             case 'eulerianCheck':
                 return (
                     <div className={styles['eulerian-check']}>
@@ -681,6 +640,67 @@ const GraphView = ({ graphType, weight }) => {
 
     return (
         <div className={styles['graph-container']}>
+            {isModalOpen && (
+                <div className={styles['modal-overlay']}>
+                    <div className={styles['modal-content']}>
+                        <button className={styles['close-button']} onClick={toggleModal}>
+                            ✖
+                        </button>
+                        <div className={styles['matrix-display']}>
+                            <h3>Adjacency Matrix</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        {graphData.nodes.map(node => (
+                                            <th key={node.data.id}>{node.data.id}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {adjacencyMatrix.map((row, i) => (
+                                        <tr key={i}>
+                                            <td>{graphData.nodes[i].data.id}</td>
+                                            {row.map((cell, j) => (
+                                                <td key={j}>{cell}</td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {graphType === '2' && (
+                                <div>
+                                    <h4>Directed Graph Adjacency Details</h4>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Node</th>
+                                                <th>Outgoing Vertices</th>
+                                                <th>Incoming Vertices</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Object.keys(adjacencyList).map(nodeId => {
+                                                const outgoingVertices = adjacencyList[nodeId] || [];
+                                                const incomingVertices = Object.keys(adjacencyList).filter(
+                                                    otherNode => adjacencyList[otherNode]?.includes(nodeId)
+                                                );
+                                                return (
+                                                    <tr key={nodeId}>
+                                                        <td>{nodeId}</td>
+                                                        <td>{outgoingVertices.join(', ') || 'None'}</td>
+                                                        <td>{incomingVertices.join(', ') || 'None'}</td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className={styles['graph-header']}>
                 <div className={styles['graph-input']}>
                     <div className={styles['upper-input']}>
