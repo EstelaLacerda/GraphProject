@@ -870,7 +870,11 @@ const GraphView = ({ graphType, weight }) => {
                     >
                         ✖
                     </button>
-                    <button className={styles['info-menu']} onClick={() => setMenuOption('')}>Back to Options</button>
+                    {menuOption && (
+                        <button className={styles['info-menu']} onClick={() => setMenuOption('')}>
+                            Back to Options
+                        </button>
+                    )}
                     {renderMenuContent()}
                 </div>
             </div>
