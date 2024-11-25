@@ -694,7 +694,16 @@ const GraphView = ({ graphType, weight }) => {
                             <input
                                 type="text"
                                 value={adjSourceNode}
-                                onChange={(e) => setAdjSourceNode(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setAdjSourceNode(value);
+
+                                    // Limpa os resultados caso qualquer campo seja apagado
+                                    if (!value.trim() || !adjTargetNode.trim()) {
+                                        setShortestPath(null);
+                                        setShortestPathCost(null);
+                                    }
+                                }}
                                 placeholder="Enter Source Vertex ID"
                             />
                         </div>
@@ -702,11 +711,30 @@ const GraphView = ({ graphType, weight }) => {
                             <input
                                 type="text"
                                 value={adjTargetNode}
-                                onChange={(e) => setAdjTargetNode(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setAdjTargetNode(value);
+
+                                    // Limpa os resultados caso qualquer campo seja apagado
+                                    if (!value.trim() || !adjSourceNode.trim()) {
+                                        setShortestPath(null);
+                                        setShortestPathCost(null);
+                                    }
+                                }}
                                 placeholder="Enter Target Vertex ID"
                             />
                         </div>
-                        <button className={styles['calculate-button']} onClick={calculateShortestPath}>
+                        <button
+                            className={styles['calculate-button']}
+                            onClick={() => {
+                                if (adjSourceNode.trim() && adjTargetNode.trim()) {
+                                    calculateShortestPath();
+                                } else {
+                                    setShortestPath(null);
+                                    setShortestPathCost(null);
+                                }
+                            }}
+                        >
                             Calculate Shortest Path
                         </button>
                         {shortestPath && (
@@ -1007,10 +1035,14 @@ const GraphView = ({ graphType, weight }) => {
                                 targetArrowColor: '#ff6347',
                                 targetArrowShape: graphType === '1' ? 'none' : 'triangle',
                                 label: weight === '1' ? 'data(weight)' : '',
+                                color: '#fff',
+                                fontSize: '12px',
+                                fontWeight: '900',
                                 curveStyle: 'bezier',
                                 controlPointDistance: 20,
                                 controlPointWeight: 0.5
                             }
+
                         }
                     ]}
                 />
