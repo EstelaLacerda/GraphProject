@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import CytoscapeComponent from 'react-cytoscapejs';
 import styles from './GraphView.module.css';
 import jsPDF from 'jspdf';
@@ -8,6 +9,12 @@ import HelpButton from '../HelpButton';
 import Papa from 'papaparse';
 
 const GraphView = ({ graphType, weight }) => {
+    const navigate = useNavigate();
+
+    const goBack = () => {
+        navigate(`/`);
+    };
+
     const [width] = useState("100%");
     const [height] = useState("400px");
 
@@ -856,12 +863,24 @@ const GraphView = ({ graphType, weight }) => {
                         <button className={styles['graph-button']} onClick={addEdge}>Add Edge</button>
                     </div>
                 </div>
-                <button
-                    className={styles['open-menu-button']}
-                    onClick={toggleMenu}
-                >
-                    {isMenuVisible ? 'Close Menu' : 'Show Menu'}
-                </button>
+                {!isMenuVisible && (
+                    <>
+                        <div className={styles['above-buttons']}>
+                            <button
+                                className={styles['open-menu-button']}
+                                onClick={toggleMenu}
+                            >
+                                Show Menu
+                            </button>
+                            <button
+                                className={styles['back-menu-button']}
+                                onClick={goBack}
+                            >
+                                Go Back
+                            </button>
+                        </div>
+                    </>
+                )}
 
                 <div className={`${styles['graph-info']} ${isMenuVisible ? styles['show'] : ''}`}>
                     <button
