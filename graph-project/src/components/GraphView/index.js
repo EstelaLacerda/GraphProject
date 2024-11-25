@@ -54,6 +54,14 @@ const GraphView = ({ graphType, weight }) => {
     const [shortestPath, setShortestPath] = useState(null);
     const [shortestPathCost, setShortestPathCost] = useState(null);
 
+    const [eulerianModal, setEulerianModal] = useState(false);
+    const [eulerianMessage, setEulerianMessage] = useState(null);
+
+    const closePopup = () => {
+        setEulerianModal(false);
+        setEulerianMessage(null);
+    };
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const toggleModal = () => {
@@ -251,7 +259,6 @@ const GraphView = ({ graphType, weight }) => {
 
         const edgeExists = graphData.edges.some(edge => {
             if (graphType === '1') {
-                // Para grafos não direcionados, verifica ambas as direções
                 return (
                     (edge.data.source === edgeSource && edge.data.target === edgeTarget) ||
                     (edge.data.source === edgeTarget && edge.data.target === edgeSource)
@@ -404,7 +411,7 @@ const GraphView = ({ graphType, weight }) => {
         ...graphData.edges.map(edge => ({ data: edge.data }))
     ];
 
-    const isEulerian = () => {
+    const handleEulerianCheck = () => {
         if (graphType === '1') {
             const hasAllEvenDegrees = graphData.nodes.every(node => {
                 const totalDegree = graphData.edges.reduce((count, edge) => {
@@ -417,12 +424,11 @@ const GraphView = ({ graphType, weight }) => {
             });
 
             if (hasAllEvenDegrees) {
-                alert('O grafo é Euleriano');
+                setEulerianMessage('The graph is Eulerian.');
             } else {
-                alert('O grafo não é Euleriano');
+                setEulerianMessage('The graph is not Eulerian.');
             }
-        }
-        else if (graphType === '2') {
+        } else if (graphType === '2') {
             const inDegrees = {};
             const outDegrees = {};
 
@@ -441,11 +447,12 @@ const GraphView = ({ graphType, weight }) => {
             });
 
             if (isEulerian) {
-                alert('O grafo é Euleriano');
+                setEulerianMessage('The graph is Eulerian.');
             } else {
-                alert('O grafo não é Euleriano');
+                setEulerianMessage('The graph is not Eulerian.');
             }
         }
+        setEulerianModal(true);
     };
 
     const handleFileUpload = (e) => {
@@ -522,7 +529,6 @@ const GraphView = ({ graphType, weight }) => {
                                     const value = e.target.value;
                                     setVertexId(value);
 
-                                    // Limpa as informações de grau se o input for apagado
                                     if (!value.trim()) {
                                         setVertexDegree({
                                             inDegree: null,
@@ -641,7 +647,6 @@ const GraphView = ({ graphType, weight }) => {
                                     const value = e.target.value;
                                     setAdjSourceNode(value);
 
-                                    // Limpa a mensagem e o estado se um dos inputs for apagado
                                     if (!value.trim() || !adjTargetNode.trim()) {
                                         setAdjacencyMessage('');
                                     }
@@ -657,7 +662,6 @@ const GraphView = ({ graphType, weight }) => {
                                     const value = e.target.value;
                                     setAdjTargetNode(value);
 
-                                    // Limpa a mensagem e o estado se um dos inputs for apagado
                                     if (!value.trim() || !adjSourceNode.trim()) {
                                         setAdjacencyMessage('');
                                     }
@@ -677,7 +681,6 @@ const GraphView = ({ graphType, weight }) => {
                         >
                             Check if Adjacent
                         </button>
-                        {/* Exibe mensagem somente se ambos os inputs estiverem preenchidos */}
                         {adjSourceNode.trim() && adjTargetNode.trim() && adjacencyMessage && (
                             <p className={styles['adjacency-result']}>{adjacencyMessage}</p>
                         )}
@@ -717,7 +720,7 @@ const GraphView = ({ graphType, weight }) => {
             case 'eulerianCheck':
                 return (
                     <div className={styles['eulerian-check']}>
-                        <button className={styles['eulerian-button']} onClick={isEulerian}>
+                        <button className={styles['eulerian-button']} onClick={handleEulerianCheck}>
                             Check if Eulerian
                         </button>
                     </div>
@@ -772,7 +775,9 @@ const GraphView = ({ graphType, weight }) => {
                         <button onClick={() => setMenuOption('downloadPDF')}>Download Graph as PDF</button>
                         <button onClick={() => setMenuOption('adjacencyMatrix')}>See Adjacency Matrix</button>
                         <button onClick={() => setMenuOption('adjacencyList')}>See Adjacency List</button>
-                        <button onClick={() => setMenuOption('shortestPathAlgorithm')}>Shortest Path Algorithm</button>
+                        {weight === '1' && (
+                            <button onClick={() => setMenuOption('shortestPathAlgorithm')}>Shortest Path Algorithm</button>
+                        )}
                         <button onClick={() => setMenuOption('eulerianCheck')}>Check if Eulerian</button>
                         <button onClick={() => setMenuOption('uploadCSV')}>Upload CSV</button>
                     </div>
@@ -866,6 +871,16 @@ const GraphView = ({ graphType, weight }) => {
                     </div>
                 </div>
             )}
+            {eulerianModal && (
+                <div className={styles['eulerian-modal']}>
+                    <div className={styles['eulerian-content']}>
+                        <button className={styles['close-button']} onClick={closePopup}>
+                            ✖
+                        </button>
+                        <h3>{eulerianMessage}</h3>
+                    </div>
+                </div>
+            )}
             <div className={styles['graph-header']}>
                 <div className={styles['graph-input']}>
                     <div className={styles['upper-input']}>
@@ -936,7 +951,6 @@ const GraphView = ({ graphType, weight }) => {
                         </div>
                     </>
                 )}
-
                 <div className={`${styles['graph-info']} ${isMenuVisible ? styles['show'] : ''}`}>
                     <button
                         className={styles['close-menu-button']}
