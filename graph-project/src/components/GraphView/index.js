@@ -518,16 +518,43 @@ const GraphView = ({ graphType, weight }) => {
                             <input
                                 type="text"
                                 value={vertexId}
-                                onChange={(e) => setVertexId(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setVertexId(value);
+
+                                    // Limpa as informações de grau se o input for apagado
+                                    if (!value.trim()) {
+                                        setVertexDegree({
+                                            inDegree: null,
+                                            outDegree: null,
+                                            totalDegree: null,
+                                            message: null,
+                                        });
+                                    }
+                                }}
                                 placeholder="Enter Vertex ID for Degree"
                             />
                         </div>
-                        <button className={styles['degree-button']} onClick={calculateVertexDegree}>
+                        <button
+                            className={styles['degree-button']}
+                            onClick={() => {
+                                if (vertexId.trim()) {
+                                    calculateVertexDegree();
+                                } else {
+                                    setVertexDegree({
+                                        inDegree: null,
+                                        outDegree: null,
+                                        totalDegree: null,
+                                        message: "Please enter a valid vertex ID.",
+                                    });
+                                }
+                            }}
+                        >
                             Calculate Degree
                         </button>
                         {vertexDegree.message && <p className={styles['error-message']}>{vertexDegree.message}</p>}
 
-                        {graphType === '2' && vertexDegree.inDegree !== null && (
+                        {vertexId.trim() && graphType === '2' && vertexDegree.inDegree !== null && (
                             <div className={styles['degree-info']}>
                                 <p>Vertex {vertexId}:</p>
                                 <p>Outgoing edges: {vertexDegree.outDegree}</p>
@@ -536,7 +563,7 @@ const GraphView = ({ graphType, weight }) => {
                             </div>
                         )}
 
-                        {graphType !== '2' && vertexDegree.totalDegree !== null && (
+                        {vertexId.trim() && graphType !== '2' && vertexDegree.totalDegree !== null && (
                             <p className={styles['degree-info']}>
                                 Vertex {vertexId} has a total degree of: {vertexDegree.totalDegree}
                             </p>
@@ -610,7 +637,15 @@ const GraphView = ({ graphType, weight }) => {
                             <input
                                 type="text"
                                 value={adjSourceNode}
-                                onChange={(e) => setAdjSourceNode(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setAdjSourceNode(value);
+
+                                    // Limpa a mensagem e o estado se um dos inputs for apagado
+                                    if (!value.trim() || !adjTargetNode.trim()) {
+                                        setAdjacencyMessage('');
+                                    }
+                                }}
                                 placeholder="Enter Source Vertex ID"
                             />
                         </div>
@@ -618,14 +653,34 @@ const GraphView = ({ graphType, weight }) => {
                             <input
                                 type="text"
                                 value={adjTargetNode}
-                                onChange={(e) => setAdjTargetNode(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setAdjTargetNode(value);
+
+                                    // Limpa a mensagem e o estado se um dos inputs for apagado
+                                    if (!value.trim() || !adjSourceNode.trim()) {
+                                        setAdjacencyMessage('');
+                                    }
+                                }}
                                 placeholder="Enter Target Vertex ID"
                             />
                         </div>
-                        <button className={styles['check-button']} onClick={checkAdjacency}>
+                        <button
+                            className={styles['check-button']}
+                            onClick={() => {
+                                if (adjSourceNode.trim() && adjTargetNode.trim()) {
+                                    checkAdjacency();
+                                } else {
+                                    setAdjacencyMessage('Please enter both Source and Target Vertex IDs.');
+                                }
+                            }}
+                        >
                             Check if Adjacent
                         </button>
-                        {adjacencyMessage && <p className={styles['adjacency-result']}>{adjacencyMessage}</p>}
+                        {/* Exibe mensagem somente se ambos os inputs estiverem preenchidos */}
+                        {adjSourceNode.trim() && adjTargetNode.trim() && adjacencyMessage && (
+                            <p className={styles['adjacency-result']}>{adjacencyMessage}</p>
+                        )}
                     </div>
                 );
             case 'shortestPathAlgorithm':
